@@ -707,7 +707,7 @@
                 </a>
 
                 <!-- 3. Study Center -->
-                @php $isStudyActive = request()->routeIs('modules.study-center*'); @endphp
+                @php $isStudyActive = request()->routeIs('modules.study-center*') || request()->routeIs('study-center*'); @endphp
                 <div class="treeview-parent-item">
                     <a href="javascript:void(0)" onclick="toggleMenu(event, 'menu-study-center')" id="menu-study-center-parent" class="w-full flex items-center justify-between px-3 py-2 rounded-xl font-medium text-left transition hover:bg-slate-800 hover:text-white {{ $isStudyActive ? 'bg-slate-800 text-indigo-400' : 'text-slate-400' }}">
                         <div class="flex items-center space-x-2.5">
@@ -717,11 +717,11 @@
                         <i id="menu-study-center-arrow" class="fa-solid fa-chevron-right text-[9px] text-slate-600 {{ $isStudyActive ? 'rotate-90 text-indigo-400' : '' }}"></i>
                     </a>
                     <ul id="menu-study-center" class="mt-1 space-y-0.5 pl-6 border-l border-slate-800 ml-5 {{ $isStudyActive ? '' : 'hidden' }}">
-                        <li><a href="{{ route('modules.study-center', ['tab' => 'dashboard']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isStudyActive && request('tab', 'dashboard') == 'dashboard' ? 'active-sublink' : '' }}">Dashboard</a></li>
-                        <li><a href="{{ route('modules.study-center', ['tab' => 'classwork']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isStudyActive && request('tab') == 'classwork' ? 'active-sublink' : '' }}">Classwork &amp; Logbook</a></li>
-                        <li><a href="{{ route('modules.study-center', ['tab' => 'syllabus']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isStudyActive && request('tab') == 'syllabus' ? 'active-sublink' : '' }}">Manage Syllabus</a></li>
-                        <li><a href="{{ route('modules.study-center', ['tab' => 'materials']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isStudyActive && request('tab') == 'materials' ? 'active-sublink' : '' }}">Manage Resources</a></li>
-                        <li><a href="{{ route('modules.study-center', ['tab' => 'homework']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isStudyActive && request('tab') == 'homework' ? 'active-sublink' : '' }}">Homework &amp; Assignments</a></li>
+                        <li><a href="{{ route('study-center.dashboard') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ (request()->routeIs('study-center.dashboard') || (request()->routeIs('study-center.index') && request('tab', 'dashboard') == 'dashboard')) ? 'active-sublink' : '' }}">Dashboard</a></li>
+                        <li><a href="{{ route('study-center.classwork') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ (request()->routeIs('study-center.classwork*') || request('tab') == 'classwork') ? 'active-sublink' : '' }}">Classwork &amp; Logbook</a></li>
+                        <li><a href="{{ route('study-center.syllabus') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ (request()->routeIs('study-center.syllabus*') || request('tab') == 'syllabus') ? 'active-sublink' : '' }}">Manage Syllabus</a></li>
+                        <li><a href="{{ route('study-center.materials') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ (request()->routeIs('study-center.materials*') || request('tab') == 'materials') ? 'active-sublink' : '' }}">Manage Resources</a></li>
+                        <li><a href="{{ route('study-center.homework') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ (request()->routeIs('study-center.homework*') || request('tab') == 'homework') ? 'active-sublink' : '' }}">Homework &amp; Assignments</a></li>
                     </ul>
                 </div>
 
@@ -752,9 +752,9 @@
                         <i id="menu-id-cards-arrow" class="fa-solid fa-chevron-right text-[9px] text-slate-600 {{ $isIDActive ? 'rotate-90 text-teal-400' : '' }}"></i>
                     </a>
                     <ul id="menu-id-cards" class="mt-1 space-y-0.5 pl-6 border-l border-slate-800 ml-5 {{ $isIDActive ? '' : 'hidden' }}">
-                        <li><a href="{{ route('modules.id-cards', ['tab' => 'students']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isIDActive && request('tab', 'students') == 'students' ? 'active-sublink' : '' }}">Student ID Cards</a></li>
-                        <li><a href="{{ route('modules.id-cards', ['tab' => 'staff']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isIDActive && request('tab') == 'staff' ? 'active-sublink' : '' }}">Staff ID Cards</a></li>
-                        <li><a href="{{ route('modules.id-cards', ['tab' => 'designs']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isIDActive && request('tab') == 'designs' ? 'active-sublink' : '' }}">Card Designs</a></li>
+                        <li><a href="{{ route('id-cards.students') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ (request()->routeIs('id-cards.students') || (request()->routeIs('id-cards.*') && request('tab', 'students') == 'students')) ? 'active-sublink' : '' }}">Student ID Cards</a></li>
+                        <li><a href="{{ route('id-cards.staff') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ (request()->routeIs('id-cards.staff') || request('tab') == 'staff') ? 'active-sublink' : '' }}">Staff ID Cards</a></li>
+                        <li><a href="{{ route('id-cards.designs') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ (request()->routeIs('id-cards.designs') || request('tab') == 'designs') ? 'active-sublink' : '' }}">Card Designs</a></li>
                     </ul>
                 </div>
 
@@ -1185,6 +1185,34 @@
             sidebar.classList.toggle('hidden');
         }
     }
+
+    // 5. Global Modal Helpers (Accessible across all ERP modules)
+    window.openModal = function(modalId) {
+        const el = document.getElementById(modalId);
+        if (!el) {
+            console.warn('Modal not found:', modalId);
+            return;
+        }
+        el.classList.remove('hidden');
+        el.classList.add('flex');
+        document.body.classList.add('overflow-hidden');
+    };
+
+    window.closeModal = function(modalId) {
+        const el = document.getElementById(modalId);
+        if (!el) return;
+        el.classList.add('hidden');
+        el.classList.remove('flex');
+        document.body.classList.remove('overflow-hidden');
+    };
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('[id$="Modal"]:not(.hidden)').forEach(function(m) {
+                window.closeModal(m.id);
+            });
+        }
+    });
     </script>
 
     <!-- Master Application JS Bundle -->

@@ -866,6 +866,7 @@ Route::prefix('school')->group(function () {
     // =========================================================================
     Route::prefix('modules')->name('modules.')->group(function () {
         Route::get('/live-classes', [ModulesController::class, 'liveClasses'])->name('live-classes');
+        Route::post('/live-classes/store', [ModulesController::class, 'storeLiveClass'])->name('live-classes.store');
         Route::get('/apps', [ModulesController::class, 'appsCenter'])->name('apps');
         Route::get('/study-center', [ModulesController::class, 'studyCenter'])->name('study-center');
         Route::get('/certificates', [ModulesController::class, 'certificates'])->name('certificates');
@@ -886,24 +887,85 @@ Route::prefix('school')->group(function () {
         Route::get('/reports', [ModulesController::class, 'reports'])->name('reports');
     });
 
-    // Direct Live Demo Aliases
-    Route::get('/study-center/live-classes', [ModulesController::class, 'liveClasses']);
-    Route::get('/study-center/live-classes/settings', function() {
-        return redirect()->route('modules.live-classes', ['tab' => 'settings']);
+    // Direct Live Demo Aliases - Study Center
+    Route::prefix('study-center')->name('study-center.')->group(function () {
+        Route::get('/', [ModulesController::class, 'studyCenter'])->name('index');
+        Route::get('/dashboard', [ModulesController::class, 'studyCenter'])->name('dashboard');
+        
+        // Classwork
+        Route::get('/classwork', function(\Illuminate\Http\Request $request) {
+            return app(ModulesController::class)->studyCenter($request, 'classwork');
+        })->name('classwork');
+        Route::get('/classwork/create', [ModulesController::class, 'createClasswork'])->name('classwork.create');
+        Route::post('/classwork', [ModulesController::class, 'storeClasswork'])->name('classwork.store');
+        Route::delete('/classwork/{id}', [ModulesController::class, 'deleteClasswork'])->name('classwork.delete');
+
+        // Syllabus
+        Route::get('/syllabus', function(\Illuminate\Http\Request $request) {
+            return app(ModulesController::class)->studyCenter($request, 'syllabus');
+        })->name('syllabus');
+        Route::post('/syllabus', [ModulesController::class, 'storeSyllabus'])->name('syllabus.store');
+        Route::post('/syllabus/{id}/toggle', [ModulesController::class, 'toggleSyllabusStatus'])->name('syllabus.toggle');
+        Route::delete('/syllabus/{id}', [ModulesController::class, 'deleteSyllabus'])->name('syllabus.delete');
+
+        // Materials
+        Route::get('/materials', function(\Illuminate\Http\Request $request) {
+            return app(ModulesController::class)->studyCenter($request, 'materials');
+        })->name('materials');
+        Route::post('/materials', [ModulesController::class, 'storeMaterial'])->name('materials.store');
+        Route::delete('/materials/{id}', [ModulesController::class, 'deleteMaterial'])->name('materials.delete');
+
+        // Homework
+        Route::get('/homework', function(\Illuminate\Http\Request $request) {
+            return app(ModulesController::class)->studyCenter($request, 'homework');
+        })->name('homework');
+        Route::get('/homework/create', [ModulesController::class, 'createHomework'])->name('homework.create');
+        Route::post('/homework', [ModulesController::class, 'storeHomework'])->name('homework.store');
+        Route::delete('/homework/{id}', [ModulesController::class, 'deleteHomework'])->name('homework.delete');
+        Route::get('/homework/{id}/submissions', [ModulesController::class, 'homeworkSubmissions'])->name('homework.submissions');
+        Route::post('/homework/submissions/{id}/evaluate', [ModulesController::class, 'evaluateHomeworkSubmission'])->name('homework.submissions.evaluate');
+
+        // Guide
+        Route::get('/guide', [ModulesController::class, 'studyGuide'])->name('guide');
+
+        // Live Classes link
+        Route::get('/live-classes', [ModulesController::class, 'liveClasses'])->name('live-classes');
+        Route::get('/live-classes/settings', function() {
+            return redirect()->route('modules.live-classes', ['tab' => 'settings']);
+        });
     });
+
     Route::get('/apps', [ModulesController::class, 'appsCenter']);
-    Route::get('/study-center', [ModulesController::class, 'studyCenter']);
-    Route::get('/study-center/classwork', function() { return redirect()->route('modules.study-center', ['tab' => 'classwork']); });
-    Route::get('/study-center/syllabus', function() { return redirect()->route('modules.study-center', ['tab' => 'syllabus']); });
-    Route::get('/study-center/materials', function() { return redirect()->route('modules.study-center', ['tab' => 'materials']); });
-    Route::get('/study-center/homework', function() { return redirect()->route('modules.study-center', ['tab' => 'homework']); });
 
     Route::get('/certificate-templates', [ModulesController::class, 'certificates']);
     Route::get('/generate-document', function() { return redirect()->route('modules.certificates', ['tab' => 'generate']); });
 
-    Route::get('/id-cards/students', [ModulesController::class, 'idCards']);
-    Route::get('/id-cards/staff', function() { return redirect()->route('modules.id-cards', ['tab' => 'staff']); });
-    Route::get('/id-cards/designs', function() { return redirect()->route('modules.id-cards', ['tab' => 'designs']); });
+    // Direct Live Demo Aliases - ID Cards
+    Route::prefix('id-cards')->name('id-cards.')->group(function () {
+        Route::get('/', function(\Illuminate\Http\Request $request) {
+            return app(ModulesController::class)->idCards($request, 'students');
+        })->name('index');
+        Route::get('/students', function(\Illuminate\Http\Request $request) {
+            return app(ModulesController::class)->idCards($request, 'students');
+        })->name('students');
+        Route::post('/students/generate', [ModulesController::class, 'generateStudentIdCards'])->name('students.generate');
+
+        Route::get('/staff', function(\Illuminate\Http\Request $request) {
+            return app(ModulesController::class)->idCards($request, 'staff');
+        })->name('staff');
+        Route::post('/staff/generate', [ModulesController::class, 'generateStaffIdCards'])->name('staff.generate');
+
+        Route::get('/designs', function(\Illuminate\Http\Request $request) {
+            return app(ModulesController::class)->idCards($request, 'designs');
+        })->name('designs');
+        Route::post('/templates/store', [ModulesController::class, 'storeIdCardTemplate'])->name('templates.store');
+        Route::post('/templates/{id}/default', [ModulesController::class, 'setDefaultTemplate'])->name('templates.default');
+        Route::delete('/templates/{id}', [ModulesController::class, 'deleteIdCardTemplate'])->name('templates.delete');
+    });
+
+    Route::get('/staff-id-card', function(\Illuminate\Http\Request $request) {
+        return app(ModulesController::class)->idCards($request, 'staff');
+    })->name('staff.id-card');
 
     Route::get('/notices', [ModulesController::class, 'communicate']);
     Route::get('/events', function() { return redirect()->route('modules.communicate', ['tab' => 'events']); });
