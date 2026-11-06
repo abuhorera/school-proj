@@ -190,23 +190,24 @@ class ModulesSuiteSeeder extends Seeder
             'updated_at' => now()
         ]);
 
+        $hostelId = DB::table('hostels')->value('id') ?? 1;
+        $roomTypeId = DB::table('hostel_room_types')->value('id') ?? 1;
+
         $hostelRoom = DB::table('hostel_rooms')->insertGetId([
+            'hostel_id' => $hostelId,
             'block_id' => $hostelBlock,
+            'room_type_id' => $roomTypeId,
             'room_number' => 'TB-201',
-            'room_type' => 'Double Sharing (AC)',
-            'bed_count' => 2,
-            'cost_per_bed' => 4500.00,
-            'status' => 'Available',
+            'capacity' => 2,
             'created_at' => now(),
             'updated_at' => now()
         ]);
 
         DB::table('hostel_allocations')->insert([
-            'student_id' => 1,
-            'student_name' => 'Aarav Sharma',
+            'hostel_room_id' => $hostelRoom,
             'room_id' => $hostelRoom,
-            'bed_no' => 1,
-            'allocation_date' => now()->startOfYear()->toDateString(),
+            'student_id' => 1,
+            'allocated_at' => now(),
             'status' => 'Active',
             'created_at' => now(),
             'updated_at' => now()

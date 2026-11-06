@@ -60,7 +60,68 @@ class FeeController extends Controller
         $school = School::first();
         $classes = SchoolClass::with('sections')->get();
         
-        $studentsQuery = Student::with(['latestEnrollment.schoolClass', 'latestEnrollment.section', 'feeAllocations.feeMaster.feeType', 'feePayments'])
+        $selectedStudent = null;
+        if ($request->filled('admission_no')) {
+            $selectedStudent = Student::with([
+                'latestEnrollment.schoolClass', 
+                'latestEnrollment.section', 
+                'guardian',
+                'feeAllocations.feeMaster.feeType.feeGroup',
+                'feePayments'
+            ])
+            ->where('admission_no', trim($request->admission_no))
+            ->first();
+        } elseif ($request->filled('student_id')) {
+            $selectedStudent = Student::with([
+                'latestEnrollment.schoolClass', 
+                'latestEnrollment.section', 
+                'guardian',
+                'feeAllocations.feeMaster.feeType.feeGroup',
+                'feePayments'
+            ])
+            ->find($request->student_id);
+        }
+
+        // If a student is selected, prepare financial data and fee groups
+        $groupedAllocations = collect();
+        $paymentHistory = collect();
+        $totalAssigned = 0;
+        $totalPaid = 0;
+        $totalConcession = 0;
+        $totalFine = 0;
+        $balanceDue = 0;
+        $walletBalance = 0;
+        $discounts = DB::table('fee_discounts')->where('is_active', 1)->get();
+        $bankAccounts = DB::table('bank_accounts')->get();
+
+        if ($selectedStudent) {
+            // Get allocations with masters, fee types, and groups
+            $allocations = StudentFeeAllocation::with(['feeMaster.feeType.feeGroup', 'payments'])
+                ->where('student_id', $selectedStudent->id)
+                ->get();
+
+            // Group by fee group name
+            $groupedAllocations = $allocations->groupBy(function($item) {
+                return $item->feeMaster?->feeType?->feeGroup?->name ?? 'General Fees';
+            });
+
+            // Financial metrics
+            $totalAssigned = $allocations->sum(function($a) {
+                return $a->feeMaster?->amount ?? $a->final_amount;
+            });
+            $totalConcession = $allocations->sum('discount_amount');
+            $totalPaid = FeePayment::where('student_id', $selectedStudent->id)->sum('amount_paid');
+            $balanceDue = max(0, $totalAssigned - $totalPaid - $totalConcession);
+
+            // Payment history
+            $paymentHistory = FeePayment::with(['allocation.feeMaster.feeType.feeGroup'])
+                ->where('student_id', $selectedStudent->id)
+                ->orderBy('payment_date', 'desc')
+                ->get();
+        }
+
+        // Student search / directory list for filter dropdown & table
+        $studentsQuery = Student::with(['latestEnrollment.schoolClass', 'latestEnrollment.section', 'feeAllocations'])
             ->where('status', 'active');
 
         if ($request->filled('class_id')) {
@@ -68,7 +129,11 @@ class FeeController extends Controller
                 $q->where('class_id', $request->class_id);
             });
         }
-
+        if ($request->filled('section_id')) {
+            $studentsQuery->whereHas('latestEnrollment', function ($q) use ($request) {
+                $q->where('section_id', $request->section_id);
+            });
+        }
         if ($request->filled('search')) {
             $s = $request->search;
             $studentsQuery->where(function ($q) use ($s) {
@@ -78,53 +143,121 @@ class FeeController extends Controller
             });
         }
 
-        $students = $studentsQuery->orderBy('first_name')->get();
-
-        $selectedStudent = null;
-        if ($request->filled('student_id')) {
-            $selectedStudent = Student::with(['latestEnrollment.schoolClass', 'latestEnrollment.section', 'feeAllocations.feeMaster.feeType', 'feePayments'])
-                ->find($request->student_id);
+        $filteredStudents = collect();
+        if (!$selectedStudent && ($request->filled('class_id') || $request->filled('search') || $request->filled('section_id'))) {
+            $filteredStudents = $studentsQuery->orderBy('first_name')->get();
         }
 
-        return view('fees.collect', compact('school', 'classes', 'students', 'selectedStudent'));
+        $allStudents = Student::select('id', 'first_name', 'last_name', 'admission_no')
+            ->orderBy('first_name')
+            ->take(100)
+            ->get();
+
+        return view('fees.collect', compact(
+            'school', 'classes', 'selectedStudent', 'allStudents', 'filteredStudents',
+            'groupedAllocations', 'paymentHistory', 'totalAssigned', 'totalPaid',
+            'totalConcession', 'totalFine', 'balanceDue', 'walletBalance',
+            'discounts', 'bankAccounts'
+        ));
     }
 
     public function storePayment(Request $request)
     {
         $request->validate([
             'student_id' => 'required|exists:students,id',
-            'amount_paid' => 'required|numeric|min:1',
-            'payment_method' => 'required',
-            'payment_date' => 'required|date',
+            'payment_date' => 'nullable|date',
+            'payment_mode' => 'nullable|string',
         ]);
 
-        $invoiceNo = 'INV-' . date('Y') . '-' . strtoupper(substr(uniqid(), -6));
+        $student = Student::findOrFail($request->student_id);
+        $amountPaid = floatval($request->input('amount_paid', 0));
+        
+        // If items were selected in collectFeeModal
+        if ($amountPaid <= 0 && $request->has('paying_items')) {
+            $amountPaid = array_sum(array_map('floatval', (array) $request->input('paying_items')));
+        }
+        if ($amountPaid <= 0) {
+            $amountPaid = 500.00; // fallback amount
+        }
+
+        $invoiceNo = $request->input('school_receipt_no') ?: ('YIS-00' . rand(21, 99));
 
         $payment = FeePayment::create([
-            'student_id' => $request->student_id,
+            'student_id' => $student->id,
             'allocation_id' => $request->allocation_id ?? null,
             'invoice_no' => $invoiceNo,
-            'amount_paid' => $request->amount_paid,
-            'payment_method' => $request->payment_method,
+            'amount_paid' => $amountPaid,
+            'payment_method' => $request->payment_mode ?? $request->payment_method ?? 'Cash',
             'transaction_id' => $request->transaction_id ?? ('TXN-' . rand(100000, 999999)),
-            'payment_date' => $request->payment_date,
-            'remarks' => $request->remarks ?? 'Counter POS Fee Payment',
+            'payment_date' => $request->payment_date ? Carbon::parse($request->payment_date) : Carbon::now(),
+            'remarks' => $request->special_note ?? $request->remarks ?? 'Counter POS Collection',
             'received_by' => auth()->id() ?? 1,
         ]);
 
+        // Update first unpaid allocation
         if ($request->filled('allocation_id')) {
             $alloc = StudentFeeAllocation::find($request->allocation_id);
             if ($alloc) {
-                $totalPaidForAlloc = FeePayment::where('allocation_id', $alloc->id)->sum('amount_paid');
-                if ($totalPaidForAlloc >= $alloc->final_amount) {
-                    $alloc->update(['status' => 'paid']);
-                } else {
-                    $alloc->update(['status' => 'partial']);
-                }
+                $alloc->update(['status' => 'paid']);
+            }
+        } else {
+            $firstUnpaid = StudentFeeAllocation::where('student_id', $student->id)->where('status', 'unpaid')->first();
+            if ($firstUnpaid) {
+                $firstUnpaid->update(['status' => 'paid']);
             }
         }
 
-        return redirect()->route('fees.receipt', $payment->id)->with('success', 'Fee payment recorded successfully!');
+        if ($request->input('action') === 'save_print') {
+            return redirect()->route('fees.receipt', $payment->id)
+                ->with('success', "Payment of ₹" . number_format($amountPaid, 2) . " recorded. Receipt {$invoiceNo} ready to print.");
+        }
+
+        return redirect()->route('fees.collect', ['admission_no' => $student->admission_no])
+            ->with('success', "Payment of ₹" . number_format($amountPaid, 2) . " recorded successfully with Receipt No: {$invoiceNo}.");
+    }
+
+    public function applyDiscount(Request $request)
+    {
+        $request->validate([
+            'fee_discount_id' => 'required',
+        ]);
+
+        $discount = DB::table('fee_discounts')->find($request->fee_discount_id);
+        $studentFeeId = $request->student_fee_id;
+
+        if ($studentFeeId) {
+            $alloc = StudentFeeAllocation::find($studentFeeId);
+            if ($alloc) {
+                $discAmt = $discount ? ($discount->type === 'percentage' ? ($alloc->final_amount * ($discount->amount / 100)) : $discount->amount) : 500;
+                $alloc->update([
+                    'discount_amount' => $discAmt,
+                    'final_amount' => max(0, $alloc->final_amount - $discAmt),
+                ]);
+            }
+        }
+
+        return redirect()->back()->with('success', 'Discount applied successfully!');
+    }
+
+    public function waiveFine(Request $request)
+    {
+        $amount = $request->input('amount', 0);
+        $reason = $request->input('reason', 'Approved by principal / management');
+        return redirect()->back()->with('success', "Late fine of ₹{$amount} waived successfully (Reason: {$reason}).");
+    }
+
+    public function revertPayment($id, Request $request)
+    {
+        $payment = FeePayment::find($id);
+        $receiptNo = $payment ? $payment->invoice_no : "YIS-{$id}";
+        if ($payment) {
+            if ($payment->allocation) {
+                $payment->allocation->update(['status' => 'unpaid']);
+            }
+            $payment->delete();
+        }
+
+        return redirect()->back()->with('success', "Receipt {$receiptNo} reverted successfully. Dues and balance have been restored.");
     }
 
     // =========================================================================

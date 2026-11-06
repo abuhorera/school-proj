@@ -1,0 +1,1595 @@
+/*
+================================================================================
+| CUSTOM ADMINLTE THEME - Projectworlds Brand
+================================================================================
+| This file provides a consistent, professional theme based on the Projectworlds logo.
+*/
+
+/* --- 1. Global & Typography --- */
+body {
+    font-family: 'Source Sans Pro', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+.content-wrapper {
+    background-color: #f8f9fa;
+}
+
+/* --- Projectworlds Orange Links --- */
+a {
+    color: #f37021;
+    /* Projectworlds Orange */
+}
+
+a:hover {
+    color: #d8641c;
+    /* A slightly darker orange for hover */
+}
+
+.card-primary.card-outline {
+    border-top: 3px solid #f37021;
+}
+
+/* --- 2. Main Sidebar Theme --- */
+body .main-sidebar .nav-sidebar .nav-link {
+    transition: all 0.2s ease-in-out;
+    border-left: 3px solid transparent !important;
+    position: relative;
+}
+/* Active / open parent item: a colored left marker that follows the chosen
+   "Sidebar Accent Color" (--pw-sidebar-accent, injected by page.blade; falls
+   back to Projectworlds orange). Text color and hover/active backgrounds are
+   set per sidebar theme below so a light/white sidebar never renders
+   white-on-white (which made the active item invisible). */
+body .main-sidebar .nav-sidebar>.nav-item.menu-open>.nav-link,
+body .main-sidebar .nav-sidebar>.nav-item>.nav-link.active {
+    background-color: transparent !important;
+    border-left: 3px solid var(--pw-sidebar-accent, #f37021) !important;
+}
+
+/* Hide default submenu icons */
+.nav-treeview .nav-icon {
+    display: none !important;
+}
+
+/* Add custom "»" submenu symbol */
+.nav-treeview .nav-link::before {
+    content: '»';
+    margin-right: 0.75rem;
+    color: #8aa4af;
+}
+
+/* --- Dark sidebars (sidebar-dark-*): white active text, subtle light hover --- */
+body .main-sidebar[class*="sidebar-dark-"] .nav-sidebar>.nav-item.menu-open>.nav-link,
+body .main-sidebar[class*="sidebar-dark-"] .nav-sidebar>.nav-item>.nav-link.active {
+    color: #ffffff !important;
+}
+body .main-sidebar[class*="sidebar-dark-"] .nav-sidebar .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+}
+body .main-sidebar[class*="sidebar-dark-"] .nav-treeview>.nav-item>.nav-link.active {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    color: var(--pw-sidebar-accent, #f37021) !important;
+    font-weight: bold;
+}
+
+/* --- Light sidebars (sidebar-light-*): dark active text, subtle dark hover --- */
+body .main-sidebar[class*="sidebar-light-"] .nav-sidebar>.nav-item.menu-open>.nav-link,
+body .main-sidebar[class*="sidebar-light-"] .nav-sidebar>.nav-item>.nav-link.active {
+    color: #1f2d3d !important;
+}
+body .main-sidebar[class*="sidebar-light-"] .nav-sidebar .nav-link:hover {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+}
+body .main-sidebar[class*="sidebar-light-"] .nav-treeview>.nav-item>.nav-link.active {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+    color: var(--pw-sidebar-accent, #f37021) !important;
+    font-weight: bold;
+}
+
+/* --- Colorful sidebar icons (opt-in) ------------------------------------
+   Appearance → "Colorful Menu Icons" adds `pw-colorful-icons` to <body>
+   (AdminLTEConfigServiceProvider). Top-level icons then cycle a 10-colour
+   palette by position, so it works for ANY menu — the sidebar is built from
+   role_menu_structure, so there is no fixed icon list to map colours to.
+   Submenu icons stay hidden (rule above), and the active-item marker keeps
+   following --pw-sidebar-accent. Two palettes: bright tones for dark
+   sidebars, deeper tones for light/bright ones (the provider routes every
+   bright background through `sidebar-light-*`), so contrast holds either way. */
+body.pw-colorful-icons .main-sidebar {
+    --pw-ic-1: #60a5fa;
+    --pw-ic-2: #34d399;
+    --pw-ic-3: #fbbf24;
+    --pw-ic-4: #f87171;
+    --pw-ic-5: #a78bfa;
+    --pw-ic-6: #22d3ee;
+    --pw-ic-7: #fb923c;
+    --pw-ic-8: #f472b6;
+    --pw-ic-9: #4ade80;
+    --pw-ic-10: #c084fc;
+}
+
+body.pw-colorful-icons .main-sidebar[class*="sidebar-light-"] {
+    --pw-ic-1: #2563eb;
+    --pw-ic-2: #059669;
+    --pw-ic-3: #b45309;
+    --pw-ic-4: #dc2626;
+    --pw-ic-5: #7c3aed;
+    --pw-ic-6: #0891b2;
+    --pw-ic-7: #ea580c;
+    --pw-ic-8: #db2777;
+    --pw-ic-9: #16a34a;
+    --pw-ic-10: #9333ea;
+}
+
+body.pw-colorful-icons .main-sidebar .nav-sidebar>.nav-item:nth-child(10n+1)>.nav-link>.nav-icon {
+    color: var(--pw-ic-1) !important;
+}
+body.pw-colorful-icons .main-sidebar .nav-sidebar>.nav-item:nth-child(10n+2)>.nav-link>.nav-icon {
+    color: var(--pw-ic-2) !important;
+}
+body.pw-colorful-icons .main-sidebar .nav-sidebar>.nav-item:nth-child(10n+3)>.nav-link>.nav-icon {
+    color: var(--pw-ic-3) !important;
+}
+body.pw-colorful-icons .main-sidebar .nav-sidebar>.nav-item:nth-child(10n+4)>.nav-link>.nav-icon {
+    color: var(--pw-ic-4) !important;
+}
+body.pw-colorful-icons .main-sidebar .nav-sidebar>.nav-item:nth-child(10n+5)>.nav-link>.nav-icon {
+    color: var(--pw-ic-5) !important;
+}
+body.pw-colorful-icons .main-sidebar .nav-sidebar>.nav-item:nth-child(10n+6)>.nav-link>.nav-icon {
+    color: var(--pw-ic-6) !important;
+}
+body.pw-colorful-icons .main-sidebar .nav-sidebar>.nav-item:nth-child(10n+7)>.nav-link>.nav-icon {
+    color: var(--pw-ic-7) !important;
+}
+body.pw-colorful-icons .main-sidebar .nav-sidebar>.nav-item:nth-child(10n+8)>.nav-link>.nav-icon {
+    color: var(--pw-ic-8) !important;
+}
+body.pw-colorful-icons .main-sidebar .nav-sidebar>.nav-item:nth-child(10n+9)>.nav-link>.nav-icon {
+    color: var(--pw-ic-9) !important;
+}
+body.pw-colorful-icons .main-sidebar .nav-sidebar>.nav-item:nth-child(10n)>.nav-link>.nav-icon {
+    color: var(--pw-ic-10) !important;
+}
+
+/* The sidebar is docked, not a floating card. AdminLTE's `elevation-4`
+   (box-shadow: 0 14px 28px / 0 10px 10px) spreads a heavy Material drop
+   shadow in every direction — it reads as an odd, too-strong shadow,
+   especially on the light/white sidebar against the white content area.
+   Replace it with a soft shadow along the right edge only. */
+body .main-sidebar.elevation-4 {
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* --- 3. Navbar Theme --- */
+.main-header {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .1);
+}
+
+/* --- 4. Card & Box Styling --- */
+.card {
+    border: none;
+    box-shadow: 0 0 1px rgba(0, 0, 0, .125), 0 1px 3px rgba(0, 0, 0, .2);
+    border-radius: 0.35rem;
+}
+
+.card-header {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.card-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+/* --- 5. Button Styling --- */
+.btn {
+    border-radius: 0.35rem;
+    box-shadow: none !important;
+    font-weight: 600;
+    transition: all 0.15s ease-in-out;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.btn-primary {
+    background-color: #f37021;
+    border-color: #f37021;
+}
+
+.btn-primary:hover {
+    background-color: #d8641c;
+    border-color: #d8641c;
+}
+
+/* --- 6. Form Control Styling --- */
+.form-control,
+.select2-container--default .select2-selection--single {
+    border-radius: 0.35rem;
+    box-shadow: none !important;
+}
+
+.form-control:focus,
+.select2-container--default.select2-container--focus .select2-selection--single {
+    border-color: #f37021;
+    box-shadow: 0 0 0 2px rgba(243, 112, 33, 0.25) !important;
+}
+
+/* --- 7. Table & DataTables Styling --- */
+.table thead.thead-light th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    border-bottom-width: 1px;
+}
+
+.dataTables_wrapper .dt-buttons .btn {
+    background-color: #f8f9fa;
+    color: #333;
+    border-color: #ddd;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(243, 112, 33, 0.075);
+    /* Subtle orange hover for table rows */
+}
+
+/* --- 8. Miscellaneous (Badges, etc.) --- */
+.badge {
+    font-weight: 500;
+    font-size: 85%;
+    padding: 0.4em 0.6em;
+}
+
+.page-item.active .page-link {
+    background-color: #f37021;
+    /* Pagination active color */
+    border-color: #f37021;
+}
+
+/* --- 9. Enhanced Select2 Theme (Corrected) --- */
+/* Adjust the main selection box to match other form inputs */
+.select2-container--default .select2-selection--single {
+    height: calc(2.25rem + 2px);
+    border: 1px solid #ced4da;
+    padding: 0;
+    /* Remove padding from the main container */
+}
+
+/* Vertically center the selected text */
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: #495057;
+    line-height: calc(2.25rem + 2px);
+    /* Make line-height equal to the container's height */
+    padding-left: 0.75rem;
+    /* Add horizontal padding here */
+    padding-right: 25px;
+    /* Add padding to prevent text from overlapping the arrow */
+}
+
+/* Style the dropdown arrow */
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: calc(2.25rem - 2px);
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow b {
+    border-color: #555 transparent transparent transparent;
+}
+
+.select2-container--default.select2-container--open .select2-selection--single .select2-selection__arrow b {
+    border-color: transparent transparent #555 transparent;
+    border-width: 0 4px 5px 4px;
+}
+
+/* Style the dropdown panel that opens */
+.select2-dropdown {
+    border: 1px solid #f37021;
+    border-radius: 0.35rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Style the search box inside the dropdown */
+.select2-search--dropdown .select2-search__field {
+    border-radius: 0.25rem;
+    border: 1px solid #ced4da;
+}
+
+.select2-search--dropdown .select2-search__field:focus {
+    border-color: #f37021;
+    box-shadow: 0 0 0 2px rgba(243, 112, 33, 0.25) !important;
+    outline: none;
+}
+
+/* Style the options in the results list */
+.select2-results__option--highlighted {
+    background-color: #f37021 !important;
+    color: white !important;
+}
+
+.select2-results__option[aria-selected=true] {
+    background-color: #f8f9fa !important;
+    color: #333 !important;
+    font-weight: 600;
+}
+
+.select2-container--bootstrap4 .select2-selection--multiple .select2-search__field {
+    min-width: 150px;
+}
+
+/* --- Brand Logo Area (Matches AdminLTE Original — Horizontal, Single Line) --- */
+.brand-link {
+    display: flex !important;
+    flex-direction: row;
+    align-items: center;
+    height: auto !important;
+    padding: 0.8125rem 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+/* Logo image — fixed size, auto-crop any upload dimension */
+.brand-link .brand-image {
+    float: none !important;
+    width: 33px;
+    height: 33px;
+    max-height: 33px;
+    min-width: 33px;
+    object-fit: cover;             /* Auto-crops rectangular/oversized images */
+    object-position: center;       /* Centers the crop */
+    border-radius: 50%;            /* Keeps the circle shape */
+    margin-left: 0.8rem;
+    margin-right: 0.5rem;
+    margin-top: 0;
+    margin-bottom: 0;
+    opacity: 0.8;
+}
+
+/* Brand text — single line with ellipsis for long names */
+.brand-link .brand-text {
+    display: inline-block !important;
+    max-width: 140px;              /* Prevents overflow */
+    white-space: nowrap !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.4;
+    font-size: 0.95rem;
+    margin-left: 0 !important;
+    vertical-align: middle;
+}
+
+/* Collapsed sidebar — just show logo, hide text */
+.sidebar-collapse .brand-link {
+    padding: 0.8125rem 0;
+    justify-content: center;
+}
+
+.sidebar-collapse .brand-link .brand-text {
+    display: none !important;
+}
+
+.sidebar-collapse .brand-link .brand-image {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+/* Limit the width of the text in the top navigation bar */
+.navbar .nav-item .font-weight-bold {
+    max-width: 250px;
+    /* Adjust this value as needed for the top nav */
+    display: inline-block;
+    vertical-align: middle;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* --- 10. Sidebar Search Spacing Fix --- */
+/* Reduced margin to fix the empty gap between logo and search bar */
+.sidebar .form-inline {
+    margin-top: 0.5rem !important;
+    margin-bottom: 1.25rem !important;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    transition: margin-top 0.3s ease-in-out;
+}
+
+/* Add extra padding to the top of the sidebar container */
+.sidebar {
+    padding-top: 0.5rem !important;
+}
+
+/* --- Sidebar Collapse Adjustments --- */
+/* Remove excessive gap when sidebar is minimized */
+.sidebar-collapse .sidebar .form-inline {
+    margin-top: 0.5rem !important;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* Center the search icon in collapsed mode if visible */
+.sidebar-collapse .sidebar .form-inline .input-group {
+    justify-content: center;
+}
+
+.sidebar .form-inline .input-group {
+    width: 100%;
+}
+
+/* --- 11. Universal Sidebar Search Transparency --- */
+/* Overrides AdminLTE's hardcoded grey search box to beautifully blend with our solid sidebar colors */
+
+/* For Dark Themes */
+body [class*="sidebar-dark-"] .form-inline .form-control-sidebar,
+body [class*="sidebar-dark-"] .form-inline .btn-sidebar {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    color: #ffffff !important;
+}
+
+body [class*="sidebar-dark-"] .form-inline .form-control-sidebar:focus,
+body [class*="sidebar-dark-"] .form-inline .btn-sidebar:hover {
+    background-color: rgba(255, 255, 255, 0.25) !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+body [class*="sidebar-dark-"] .form-inline .form-control-sidebar::placeholder {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Search Dropdown Results Layering */
+body [class*="sidebar-dark-"] .sidebar-search-results .list-group-item {
+    background-color: #2c3034 !important;
+    border-color: #3e4448 !important;
+    color: #ffffff !important;
+}
+
+body [class*="sidebar-dark-"] .sidebar-search-results .list-group-item:hover,
+body [class*="sidebar-dark-"] .sidebar-search-results .list-group-item:focus {
+    background-color: #3a3f44 !important;
+}
+body [class*="sidebar-dark-"] .sidebar-search-results .text-light {
+    color: #ffffff !important;
+}
+
+/* Ensure sidebar search results dropdown overlays properly */
+.sidebar-search-results {
+    z-index: 1050 !important;
+}
+.sidebar-search-results .list-group {
+    max-height: 300px;
+    overflow-y: auto;
+    border-radius: 0 0 0.35rem 0.35rem;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* For Light Themes */
+body [class*="sidebar-light-"] .form-inline .form-control-sidebar,
+body [class*="sidebar-light-"] .form-inline .btn-sidebar {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+    color: #343a40 !important;
+}
+
+body [class*="sidebar-light-"] .form-inline .form-control-sidebar:focus,
+body [class*="sidebar-light-"] .form-inline .btn-sidebar:hover {
+    background-color: rgba(0, 0, 0, 0.1) !important;
+    border-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+body [class*="sidebar-light-"] .sidebar-search-results .list-group-item {
+    background-color: #ffffff !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+    color: #343a40 !important;
+}
+
+/* --- 12. Solid Theme Typography Contrast --- */
+/* Eliminates faded grey texts for inactive links when using bright Legacy solid backgrounds */
+body .main-sidebar[class*="sidebar-dark-"][class*="bg-"] .nav-sidebar .nav-link,
+body .main-sidebar[class*="sidebar-dark-"][class*="bg-"] .nav-sidebar .nav-icon,
+body .main-sidebar[class*="sidebar-dark-"][class*="bg-"] .nav-header,
+body .main-sidebar[class*="sidebar-dark-"][class*="bg-"] .nav-sidebar .nav-link p {
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.1);
+}
+
+body .main-sidebar[class*="sidebar-dark-"][class*="bg-"] .nav-sidebar .nav-item > .nav-link:hover {
+    color: #ffffff !important;
+    background-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+body .main-sidebar[class*="sidebar-dark-"][class*="bg-"] .nav-treeview .nav-link::before {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* ============================================================================
+   13. STUDENT PROFILE PAGE — Premium UI Enhancements
+   ============================================================================ */
+
+/* --- Profile Left Card: Gradient Header --- */
+.student-profile-card .card-body.box-profile {
+    padding-top: 0;
+}
+.student-profile-card .profile-hero {
+    background: linear-gradient(135deg, #f37021 0%, #ff9a56 100%);
+    padding: 1.5rem 1rem 1rem;
+    border-radius: 0.35rem 0.35rem 0 0;
+    margin: -1.25rem -1.25rem 1rem;
+    text-align: center;
+}
+.student-profile-card .profile-hero .profile-user-img {
+    border: 3px solid rgba(255,255,255,0.85);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+}
+.student-profile-card .profile-hero .profile-username {
+    color: #fff;
+    font-size: 1.15rem;
+    margin-top: 0.5rem;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+.student-profile-card .profile-hero .profile-class {
+    color: rgba(255,255,255,0.9);
+    font-size: 0.85rem;
+}
+
+/* --- Tab Navigation Enhancement --- */
+#student-tabs .nav-link {
+    font-weight: 600;
+    font-size: 0.82rem;
+    color: #5a5c69;
+    padding: 0.65rem 0.85rem;
+    border: none;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+#student-tabs .nav-link:hover {
+    color: #f37021;
+    background-color: rgba(243,112,33,0.04);
+    border-bottom-color: rgba(243,112,33,0.3);
+}
+#student-tabs .nav-link.active {
+    color: #f37021;
+    border-bottom: 2px solid #f37021;
+    background-color: transparent;
+}
+#student-tabs .nav-link i {
+    margin-right: 4px;
+    font-size: 0.8rem;
+}
+
+/* --- Profile Section Cards --- */
+.profile-section {
+    border: 1px solid #e9ecef;
+    border-radius: 0.5rem;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+    background: #fff;
+    transition: box-shadow 0.2s ease;
+}
+.profile-section:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.profile-section-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.profile-section-title i {
+    color: #f37021;
+    font-size: 0.85rem;
+    width: 20px;
+    text-align: center;
+}
+.profile-section .info-row {
+    display: flex;
+    padding: 0.35rem 0;
+    font-size: 0.875rem;
+    border-bottom: 1px solid #f8f9fa;
+}
+.profile-section .info-row:last-child {
+    border-bottom: none;
+}
+.profile-section .info-label {
+    width: 140px;
+    min-width: 140px;
+    color: #6c757d;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+.profile-section .info-value {
+    flex: 1;
+    color: #2d3748;
+    font-weight: 500;
+}
+
+/* --- Parent Detail Cards --- */
+.parent-card {
+    border: 1px solid #e9ecef;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    height: 100%;
+}
+.parent-card-header {
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+.parent-card-header.father {
+    background: linear-gradient(135deg, #e8f4fd, #f0f7ff);
+    border-bottom: 2px solid #4e73df;
+    color: #2e59d9;
+}
+.parent-card-header.mother {
+    background: linear-gradient(135deg, #fdf2f8, #fef7ff);
+    border-bottom: 2px solid #e74a9a;
+    color: #d63384;
+}
+.parent-card-body {
+    padding: 0.75rem 1rem;
+}
+.parent-card-body .info-row {
+    display: flex;
+    padding: 0.3rem 0;
+    font-size: 0.85rem;
+}
+.parent-card-body .info-label {
+    width: 110px;
+    min-width: 110px;
+    color: #6c757d;
+    font-weight: 600;
+    font-size: 0.78rem;
+}
+.parent-card-body .info-value {
+    flex: 1;
+    color: #2d3748;
+}
+
+/* --- Fee Summary Dashboard --- */
+.fee-dashboard {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+.fee-stat-card {
+    border-radius: 0.5rem;
+    padding: 1rem;
+    text-align: center;
+    border: 1px solid;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.fee-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.fee-stat-card .stat-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.35rem;
+}
+.fee-stat-card .stat-value {
+    font-size: 1.25rem;
+    font-weight: 800;
+    line-height: 1.2;
+}
+.fee-stat-card .stat-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 0.2rem;
+}
+.fee-stat-card.assigned {
+    background: linear-gradient(135deg, #eef2ff, #e8edff);
+    border-color: #c7d2fe;
+    color: #4338ca;
+}
+.fee-stat-card.paid {
+    background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+    border-color: #bbf7d0;
+    color: #166534;
+}
+.fee-stat-card.due {
+    background: linear-gradient(135deg, #fef2f2, #fee2e2);
+    border-color: #fecaca;
+    color: #991b1b;
+}
+
+/* --- Fee Progress Bar --- */
+.fee-progress-container {
+    margin-bottom: 1.25rem;
+}
+.fee-progress-container .progress {
+    height: 10px;
+    border-radius: 5px;
+    background-color: #fecaca;
+    overflow: hidden;
+}
+.fee-progress-container .progress-bar {
+    background: linear-gradient(90deg, #22c55e, #16a34a);
+    border-radius: 5px;
+    transition: width 0.6s ease;
+}
+.fee-progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    color: #6c757d;
+    margin-bottom: 0.35rem;
+    font-weight: 600;
+}
+
+/* --- Fee Group Accordion (Student Profile Version) --- */
+.sp-fee-group {
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    margin-bottom: 0.75rem;
+    overflow: hidden;
+    transition: box-shadow 0.2s ease;
+}
+.sp-fee-group:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.sp-fee-group-header {
+    background: #f8fafc;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.2s ease;
+    user-select: none;
+}
+.sp-fee-group-header:hover {
+    background: #f1f5f9;
+}
+.sp-fee-group.fully-paid {
+    border-left: 3px solid #22c55e;
+}
+.sp-fee-group.has-due {
+    border-left: 3px solid #ef4444;
+}
+.sp-fee-group-header .group-name {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #1e293b;
+}
+.sp-fee-group-header .group-chevron {
+    transition: transform 0.25s ease;
+    color: #94a3b8;
+    font-size: 0.7rem;
+}
+.sp-fee-group-header[aria-expanded="true"] .group-chevron {
+    transform: rotate(90deg);
+}
+.sp-fee-group .table {
+    margin-bottom: 0;
+    font-size: 0.85rem;
+}
+.sp-fee-group .table thead th {
+    background: #f8fafc;
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #64748b;
+    border-bottom-width: 1px;
+    padding: 0.5rem 0.75rem;
+}
+.sp-fee-group .table td {
+    padding: 0.5rem 0.75rem;
+    vertical-align: middle;
+}
+.sp-fee-group .table tfoot td,
+.sp-fee-group .table tfoot th {
+    padding: 0.6rem 0.75rem;
+    font-weight: 700;
+}
+
+/* --- Empty State Styling --- */
+.empty-state {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    color: #94a3b8;
+}
+.empty-state i {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+    display: block;
+    opacity: 0.5;
+}
+.empty-state p {
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* ============================================================================
+   14. COMPACT SIDEBAR WIDTH — Professional Panel Layout
+   ============================================================================
+   Reduces AdminLTE's default 250px sidebar to 220px, gaining 30px of
+   horizontal content space. Matches the compact density of professional
+   panels (aaPanel, cPanel, etc.) without truncating typical menu labels.
+   ============================================================================ */
+
+/* --- Core width override — Aggressive --- */
+@media (min-width: 768px) {
+    /* Normal expanded state */
+    body:not(.sidebar-collapse) .main-sidebar,
+    body:not(.sidebar-collapse) .main-sidebar::before {
+        width: 220px !important;
+    }
+    body:not(.sidebar-collapse) .content-wrapper,
+    body:not(.sidebar-collapse) .main-footer,
+    body:not(.sidebar-collapse) .main-header {
+        margin-left: 220px !important;
+    }
+    
+    /* Collapsed state WITH sidebar-mini (Icons only) */
+    body.sidebar-mini.sidebar-collapse .main-sidebar,
+    body.sidebar-mini.sidebar-collapse .main-sidebar::before {
+        width: 4.6rem !important;
+        transform: none !important;
+        margin-left: 0 !important;
+    }
+    body.sidebar-mini.sidebar-collapse .content-wrapper,
+    body.sidebar-mini.sidebar-collapse .main-footer,
+    body.sidebar-mini.sidebar-collapse .main-header {
+        margin-left: 4.6rem !important;
+    }
+
+    /* Collapsed state WITHOUT sidebar-mini (Fully hidden) */
+    body.sidebar-collapse:not(.sidebar-mini) .main-sidebar,
+    body.sidebar-collapse:not(.sidebar-mini) .main-sidebar::before {
+        margin-left: -250px !important;
+    }
+    body.sidebar-collapse:not(.sidebar-mini) .content-wrapper,
+    body.sidebar-collapse:not(.sidebar-mini) .main-footer,
+    body.sidebar-collapse:not(.sidebar-mini) .main-header {
+        margin-left: 0 !important;
+    }
+
+    /* Hover expansion when collapsed (Only applies if mini is active) */
+    body.sidebar-mini.sidebar-collapse .main-sidebar:hover,
+    body.sidebar-mini.sidebar-collapse .main-sidebar.sidebar-focused,
+    body.sidebar-mini.sidebar-collapse .main-sidebar:hover::before,
+    body.sidebar-mini.sidebar-collapse .main-sidebar.sidebar-focused::before {
+        width: 220px !important;
+    }
+}
+
+/* --- Force Sidebar-Mini text behavior for all Collapse states --- */
+body.sidebar-collapse .main-sidebar:not(:hover):not(.sidebar-focused) .nav-header,
+body.sidebar-collapse .main-sidebar:not(:hover):not(.sidebar-focused) .user-panel > .info,
+body.sidebar-collapse .main-sidebar:not(:hover):not(.sidebar-focused) .nav-treeview,
+body.sidebar-collapse .brand-link .brand-text {
+    display: none !important;
+}
+
+body.sidebar-collapse .main-sidebar:hover .nav-sidebar .nav-link p,
+body.sidebar-collapse .main-sidebar.sidebar-focused .nav-sidebar .nav-link p,
+body.sidebar-collapse .main-sidebar:hover .brand-text,
+body.sidebar-collapse .main-sidebar.sidebar-focused .brand-text,
+body.sidebar-collapse .main-sidebar:hover .user-panel > .info,
+body.sidebar-collapse .main-sidebar.sidebar-focused .user-panel > .info {
+    display: inline-block !important;
+    width: auto !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* --- Nav link: tighter padding + smaller font --- */
+.main-sidebar .nav-sidebar .nav-link {
+    position: relative !important;
+    display: block !important;
+    padding: 0.45rem 0.6rem !important;
+    font-size: 0.875rem;
+}
+
+.main-sidebar .nav-sidebar .nav-link p {
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+/* --- Nav icon: slightly smaller --- */
+.main-sidebar .nav-sidebar .nav-icon {
+    width: 1.2rem !important;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+/* --- Submenu items: tighter --- */
+.main-sidebar .nav-treeview .nav-link {
+    padding: 0.3rem 0.6rem 0.3rem 1.8rem !important;
+    font-size: 0.82rem;
+}
+
+/* --- Section headers: compact --- */
+.main-sidebar .nav-header {
+    font-size: 0.7rem;
+    padding: 0.6rem 0.6rem 0.3rem;
+}
+
+/* --- Collapse arrow: Fix FA icon clipping in compact sidebar --- */
+body:not(.sidebar-collapse) .main-sidebar .nav-sidebar .nav-item.has-treeview > .nav-link,
+body.sidebar-collapse .main-sidebar:hover .nav-sidebar .nav-item.has-treeview > .nav-link {
+    position: relative !important;
+    padding-right: 30px !important; /* Make room for arrow */
+}
+body:not(.sidebar-collapse) .main-sidebar .nav-sidebar .nav-link > p > .right,
+body.sidebar-collapse .main-sidebar:hover .nav-sidebar .nav-link > p > .right {
+    position: absolute !important;
+    right: 12px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    display: block !important;
+    width: auto !important;
+    height: auto !important;
+    z-index: 100 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    color: rgba(255,255,255,0.8) !important;
+}
+body:not(.sidebar-collapse) .main-sidebar .nav-sidebar .nav-item.has-treeview.menu-open > .nav-link > p > .right,
+body:not(.sidebar-collapse) .main-sidebar .nav-sidebar .nav-item.has-treeview.menu-is-opening > .nav-link > p > .right,
+body.sidebar-collapse .main-sidebar:hover .nav-sidebar .nav-item.has-treeview.menu-open > .nav-link > p > .right,
+body.sidebar-collapse .main-sidebar:hover .nav-sidebar .nav-item.has-treeview.menu-is-opening > .nav-link > p > .right {
+    transform: translateY(-50%) rotate(-90deg) !important;
+}
+
+/* --- Brand area: smaller logo + text --- */
+.brand-link .brand-image {
+    width: 28px;
+    height: 28px;
+    max-height: 28px;
+    min-width: 28px;
+}
+
+.brand-link .brand-text {
+    max-width: 120px;
+    font-size: 0.85rem;
+}
+
+/* --- Search box: tighter (Applies when expanded OR hovered) --- */
+body:not(.sidebar-collapse) .sidebar .form-inline,
+body.sidebar-collapse .main-sidebar:hover .sidebar .form-inline,
+body.sidebar-collapse .main-sidebar.sidebar-focused .sidebar .form-inline {
+    width: 190px !important;
+    max-width: 190px !important;
+    margin: 0.5rem 0.5rem 0.75rem 0.5rem !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    display: block !important;
+    position: relative !important;
+}
+
+body:not(.sidebar-collapse) .sidebar .form-inline .input-group,
+body.sidebar-collapse .main-sidebar:hover .sidebar .form-inline .input-group,
+body.sidebar-collapse .main-sidebar.sidebar-focused .sidebar .form-inline .input-group {
+    width: 190px !important;
+    max-width: 190px !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+}
+
+body:not(.sidebar-collapse) .sidebar .form-inline .form-control-sidebar,
+body.sidebar-collapse .main-sidebar:hover .sidebar .form-inline .form-control-sidebar,
+body.sidebar-collapse .main-sidebar.sidebar-focused .sidebar .form-inline .form-control-sidebar {
+    font-size: 0.82rem !important;
+    padding: 0.3rem 0.5rem !important;
+    width: 150px !important;
+    max-width: 150px !important;
+    min-width: 150px !important;
+    flex: none !important;
+}
+
+body:not(.sidebar-collapse) .sidebar .form-inline .input-group-append,
+body:not(.sidebar-collapse) .sidebar .form-inline .btn-sidebar,
+body.sidebar-collapse .main-sidebar:hover .sidebar .form-inline .input-group-append,
+body.sidebar-collapse .main-sidebar:hover .sidebar .form-inline .btn-sidebar,
+body.sidebar-collapse .main-sidebar.sidebar-focused .sidebar .form-inline .input-group-append,
+body.sidebar-collapse .main-sidebar.sidebar-focused .sidebar .form-inline .btn-sidebar {
+    width: 40px !important;
+    max-width: 40px !important;
+    min-width: 40px !important;
+    flex: none !important;
+    padding: 0 !important;
+    text-align: center !important;
+}
+
+/* --- Sidebar overflow: clip anything wider than 220px --- */
+.main-sidebar,
+.main-sidebar .sidebar {
+    overflow-x: hidden !important;
+}
+
+/* --- Brand link: prevent overflow at 220px --- */
+body:not(.sidebar-collapse) .brand-link,
+body.sidebar-collapse .main-sidebar:hover .brand-link,
+body.sidebar-collapse .main-sidebar.sidebar-focused .brand-link {
+    overflow: hidden;
+    width: 220px !important;
+}
+
+/* ============================================================================
+   15. TOPBAR USER MENU DROPDOWN — Premium Profile Dropdown
+   ============================================================================ */
+
+/* --- Trigger button --- */
+.pw-user-trigger {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.5rem !important;
+}
+.pw-avatar-sm {
+    width: 32px !important;
+    height: 32px !important;
+    object-fit: cover;
+    border: 2px solid rgba(255,255,255,0.3);
+    transition: border-color 0.2s ease;
+}
+.pw-user-trigger:hover .pw-avatar-sm {
+    border-color: rgba(255,255,255,0.7);
+}
+.pw-user-name {
+    font-weight: 600;
+    font-size: 0.85rem;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* --- Dropdown container --- */
+.pw-user-dropdown {
+    width: 280px !important;
+    border: none;
+    border-radius: 0.5rem;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    overflow: hidden;
+    padding: 0;
+    animation: pwDropdownFadeIn 0.2s ease-out;
+}
+@keyframes pwDropdownFadeIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Header: gradient + avatar + name --- */
+.pw-user-header {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    padding: 1.25rem 1rem;
+    text-align: center;
+    border-bottom: 3px solid #f37021;
+}
+.pw-avatar-lg {
+    width: 72px !important;
+    height: 72px !important;
+    object-fit: cover;
+    border: 3px solid rgba(255,255,255,0.25);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    margin-bottom: 0.5rem;
+}
+.pw-user-header-name {
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.4;
+}
+.pw-user-header-role {
+    display: block;
+    color: rgba(255,255,255,0.7);
+    font-size: 0.78rem;
+    font-weight: 400;
+    margin-top: 0.15rem;
+    letter-spacing: 0.3px;
+}
+
+/* --- Menu body: links --- */
+.pw-user-body {
+    padding: 0.5rem 0;
+}
+.pw-user-item {
+    display: flex !important;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.55rem 1.25rem !important;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: #334155 !important;
+    transition: all 0.15s ease;
+}
+.pw-user-item:hover {
+    background-color: #f1f5f9 !important;
+    color: #0f172a !important;
+    padding-left: 1.4rem !important;
+}
+.pw-item-icon {
+    width: 18px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+.pw-logout-item:hover {
+    background-color: #fef2f2 !important;
+    color: #991b1b !important;
+}
+
+/* ============================================================================
+   16. QUICK NAV MEGA MENU — Full-width masonry list
+   ============================================================================ */
+
+/* --- Trigger button --- */
+.navbar-light .pw-quicknav-trigger {
+    color: rgba(0,0,0,0.5) !important;
+}
+.navbar-light .pw-quicknav-trigger:hover {
+    color: rgba(0,0,0,0.7) !important;
+}
+.navbar-dark .pw-quicknav-trigger {
+    color: rgba(255,255,255,0.8) !important;
+}
+.navbar-dark .pw-quicknav-trigger:hover {
+    color: rgba(255,255,255,1) !important;
+}
+
+/* --- Dropdown container --- */
+.pw-quicknav-dropdown {
+    width: 900px !important;
+    max-width: 95vw;
+    max-height: 80vh;
+    overflow-y: auto;
+    border: none;
+    border-radius: 0.5rem;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+    padding: 0;
+    animation: pwDropdownFadeIn 0.2s ease-out;
+}
+
+/* --- Search bar --- */
+.pw-quicknav-search-wrap {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #ffffff;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+.pw-quicknav-search {
+    border-radius: 0.35rem !important;
+    font-size: 0.85rem !important;
+}
+.pw-quicknav-search-wrap .input-group-text {
+    background: #f8f9fa;
+    border-color: #ced4da;
+    color: #9ca3af;
+}
+.pw-quicknav-search:focus {
+    border-color: #f37021 !important;
+    box-shadow: 0 0 0 2px rgba(243,112,33,0.15) !important;
+}
+
+/* --- Body scrollable area --- */
+.pw-quicknav-body {
+    padding: 1.25rem 1.25rem 2rem;
+}
+
+/* --- Masonry Layout --- */
+.pw-mega-wrapper {
+    column-count: 4;
+    column-gap: 2rem;
+}
+
+/* --- Module Block --- */
+.pw-mega-module {
+    break-inside: avoid;
+    margin-bottom: 1.5rem;
+}
+.pw-mega-module-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom: 1px solid #f3f4f6;
+    padding-bottom: 0.35rem;
+}
+.pw-mega-module-title i {
+    width: 18px;
+    text-align: center;
+    color: #4b5563;
+}
+.pw-mega-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.pw-mega-list li {
+    margin-bottom: 0.15rem;
+}
+
+/* --- Links --- */
+.pw-mega-link {
+    display: block;
+    font-size: 0.78rem;
+    color: #4b5563 !important;
+    padding: 0.2rem 0;
+    text-decoration: none !important;
+    transition: color 0.1s;
+}
+.pw-mega-link:hover {
+    color: #f37021 !important;
+}
+.pw-mega-link.hidden-by-search {
+    display: none !important;
+}
+
+/* --- Empty state --- */
+.pw-quicknav-empty {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: #94a3b8;
+}
+.pw-quicknav-empty i {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    display: block;
+    opacity: 0.4;
+}
+.pw-quicknav-empty p {
+    font-size: 0.85rem;
+    margin: 0;
+}
+
+/* --- Responsive --- */
+@media (max-width: 992px) {
+    .pw-mega-wrapper { column-count: 3; }
+}
+@media (max-width: 768px) {
+    .pw-quicknav-dropdown {
+        width: 95vw !important;
+        left: 2.5vw !important;
+        right: 2.5vw !important;
+        position: fixed !important;
+        top: 50px !important;
+    }
+    .pw-mega-wrapper { column-count: 2; column-gap: 1.5rem; }
+}
+@media (max-width: 480px) {
+    .pw-mega-wrapper { column-count: 1; }
+}
+
+/* --- Scrollbar styling for mega menu --- */
+.pw-quicknav-dropdown::-webkit-scrollbar {
+    width: 6px;
+}
+.pw-quicknav-dropdown::-webkit-scrollbar-track {
+    background: #f8f9fa;
+}
+.pw-quicknav-dropdown::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+.pw-quicknav-dropdown::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+/* Hide fullscreen widget on mobile */
+@media (max-width: 576px) {
+    [data-widget="fullscreen"] {
+        display: none !important;
+    }
+}
+
+/* Ensure top navbar items never get cut off on mobile without a way to reach them */
+@media (max-width: 576px) {
+    .main-header .navbar-nav {
+        flex-direction: row;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; /* Firefox */
+    }
+    .main-header .navbar-nav::-webkit-scrollbar {
+        display: none; /* Chrome/Safari/Opera */
+    }
+    
+    /* CRITICAL FIX: Because overflow-x is auto, all absolute dropdowns inside the navbar get clipped vertically.
+       We must force them to position: fixed so they break out of the scrolling container and become visible! */
+    .main-header .navbar-nav .dropdown-menu {
+        position: fixed !important;
+        top: 56px !important;
+        right: 5px !important;
+        left: auto !important;
+        width: 280px !important;
+        max-width: 95vw !important;
+        border-radius: 0.5rem !important;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2) !important;
+    }
+}
+
+/*
+================================================================================
+| PAGE TRANSITION SYSTEM  (spa_plan.md Phase 1 — flicker reduction)
+================================================================================
+| Every sidebar click is a full-page reload. To stop the jarring white flash,
+| we (a) paint the shell background immediately so any pre-render frame is the
+| brand grey, not white, and (b) fade ONLY the content area in on load so the
+| eye reads the sidebar/navbar as continuous while the content "settles".
+|
+| Deliberately OPACITY-ONLY: a `transform` on .content-wrapper would create a
+| containing block and break `position: fixed` modals/dropdowns rendered inside
+| it.
+|
+| ⚠ IMPORTANT (fixed 2026-06-27): opacity is NOT fully side-effect-free. An
+| element with an opacity *animation* creates a STACKING CONTEXT, and
+| `animation-fill-mode: both` keeps that animation in its "fill" phase forever,
+| so the stacking context becomes PERMANENT. That traps every Bootstrap modal
+| (z-index 1050) rendered inside .content-wrapper below the body-level
+| `.modal-backdrop` (z-index 1040) — the backdrop paints OVER the modal and
+| swallows all clicks, so the ✕/Close/outside click can never dismiss it (only
+| ESC worked). Fix: drop `both`. The fade still plays once on load; afterwards
+| no animation effect remains, so no stacking context, and modals layer
+| correctly. (`both` was redundant anyway — delay is 0 and the natural opacity
+| is already 1, so neither the backwards nor forwards fill changed anything.)
+*/
+
+/* Match the light content background so the first paint frame isn't white. */
+html {
+    background-color: #f4f6f9;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    /* Fade the content region in on first paint. @keyframes are not affected by
+       AdminLTE's `hold-transition` class (that only disables `transition`), so
+       this runs immediately without depending on any JS timing.
+
+       Runs on ALL browsers. (Previously this was scoped to browsers WITHOUT View
+       Transitions, because the cross-document transition below handled the
+       cross-fade. That transition was DISABLED — see the note further down — because
+       opting into it turned off the browser's native paint-holding and produced a
+       1–2s white sidebar/content flash on slower pages. With the transition off,
+       this lightweight fade is what gives navigation its soft "settle".) */
+    .content-wrapper {
+        /* No `both` — see the warning above. A filling opacity animation would
+           create a permanent stacking context that hides modals behind the
+           backdrop. Without a fill-mode the effect ends when the fade does. */
+        animation: pwContentFadeIn 200ms ease-out;
+    }
+
+    @keyframes pwContentFadeIn {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+    }
+
+    /* Hint the compositor to keep the fixed shell on its own layer so the
+       content fade doesn't trigger a full-shell repaint. */
+    .main-sidebar,
+    .main-header {
+        backface-visibility: hidden;
+    }
+}
+
+/* Never let the fade affect printing. */
+@media print {
+    .content-wrapper { animation: none !important; opacity: 1 !important; }
+}
+
+/*
+================================================================================
+| TOP NAVIGATION PROGRESS BAR  (spa_plan.md Phase 3)
+================================================================================
+| Slim brand-orange bar pinned to the very top of the viewport. JS
+| (topbar-progress.js) toggles `.pw-active` and drives the width; this is just
+| the look. High z-index so it sits above the navbar and any modal.
+*/
+#pw-progressbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background-color: #f37021; /* Projectworlds Orange */
+    box-shadow: 0 0 8px rgba(243, 112, 33, 0.6), 0 0 4px rgba(243, 112, 33, 0.4);
+    z-index: 20000;
+    opacity: 0;
+    pointer-events: none;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+    transition: width 0.2s ease, opacity 0.3s ease;
+}
+#pw-progressbar.pw-active {
+    opacity: 1;
+}
+
+@media print {
+    #pw-progressbar { display: none !important; }
+}
+
+/*
+================================================================================
+| CROSS-DOCUMENT VIEW TRANSITIONS  (spa_plan.md "Phase V")
+================================================================================
+| Makes every same-origin full-page reload animate instead of hard-cutting, and
+| holds the sidebar + topbar visually STABLE across the navigation so they read
+| as if they never reloaded. Pure CSS, progressive enhancement: browsers without
+| support simply fall back to the Phase 1 content fade above — nothing breaks.
+|
+| How it works: naming an element with `view-transition-name` lifts it into its
+| own transition "group". We then suppress the old/new fade on the shell groups
+| so they snap (stay put) while the page `root` (content + footer + body)
+| cross-fades underneath. The name must be unique per page — `.main-sidebar` and
+| `.main-header` each render exactly once, so that holds.
+*/
+
+/* ⚠ DISABLED 2026-06-25 — caused a 1–2s WHITE sidebar/content flash on slower pages,
+   across all roles (reported with a screen recording: header rendered, sidebar +
+   content blank, then "arrived").
+
+   Root cause: opting into cross-document view transitions via `@view-transition`
+   turns OFF the browser's native paint-holding (which normally keeps the OLD page
+   on screen until the new one paints). Chrome then drives its own transition, but
+   the `root` group's snapshot came up blank during the inter-page wait — so the
+   live `pw-topbar` header showed above a white `root` (sidebar + content) for the
+   full duration of the next page's load. On fast pages it's a blink; on heavier
+   pages it's the recorded 1–2s white. Disabling this restores native paint-holding
+   (no white); the lightweight `.content-wrapper` fade above keeps the soft feel.
+
+   To re-enable later, the sidebar's OverlayScrollbars + position:fixed snapshot
+   needs to be made transition-safe first (or drop `view-transition-name` from the
+   sidebar so it stays baked into the root screenshot instead of a separate, blank
+   capture).
+
+@view-transition {
+    navigation: auto;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .main-sidebar { view-transition-name: pw-sidebar; }
+    .main-header  { view-transition-name: pw-topbar; }
+
+    ::view-transition-old(pw-sidebar),
+    ::view-transition-new(pw-sidebar),
+    ::view-transition-old(pw-topbar),
+    ::view-transition-new(pw-topbar) {
+        animation: none;
+        mix-blend-mode: normal;
+        height: 100%;
+    }
+
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+        animation-duration: 220ms;
+        animation-timing-function: ease;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+        animation: none !important;
+    }
+}
+*/
+
+/* --- What's New: sidebar NEW pills (App\Menu\Filters\WhatsNewFilter, config/whats_new.php) ---
+   .badge-pw-new  = AdminLTE label_color "pw-new" on a new entry, or on a dropdown whose entries are all new.
+   .pw-whats-new-dot = a dropdown holding SOME new entries — a glowing dot on its icon says "open me".
+   When the sidebar is collapsed the pill is hidden with the text, so a new entry shows the dot instead. */
+.badge-pw-new {
+    color: #fff;
+    background: linear-gradient(90deg, #f37021 0%, #ff3d7f 50%, #f37021 100%);
+    background-size: 200% 100%;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    line-height: 1;
+    padding: 0.35em 0.6em;
+    border-radius: 999px;
+    box-shadow: 0 0 0 0 rgba(243, 112, 33, 0.6);
+    animation: pw-new-shimmer 2.8s linear infinite, pw-new-pulse 2.4s ease-out infinite;
+}
+
+/* AdminLTE pins `.right` badges to the link's right edge, but links are sized for
+   AdminLTE's 250px sidebar while ours is 220px with overflow clipped — a right-pinned
+   pill lands in the clipped strip ("NE"). Sit it inline after the text instead. */
+body .main-sidebar .nav-sidebar .nav-item > .nav-link > p > .badge.badge-pw-new.right {
+    position: static !important;
+    transform: none !important;
+    display: inline-block !important;
+    margin-left: 0.4rem;
+    vertical-align: 1px;
+    color: #fff !important;
+}
+
+.main-sidebar .nav-link.pw-whats-new-dot > .nav-icon,
+.main-sidebar .nav-link:has(> p > .badge-pw-new) > .nav-icon {
+    position: relative;
+}
+
+.main-sidebar .nav-link.pw-whats-new-dot > .nav-icon::after,
+body.sidebar-collapse .main-sidebar:not(:hover):not(.sidebar-focused) .nav-link:has(> p > .badge-pw-new) > .nav-icon::after {
+    content: "";
+    position: absolute;
+    top: -2px;
+    right: -3px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ff3d7f;
+    box-shadow: 0 0 0 0 rgba(255, 61, 127, 0.7);
+    animation: pw-new-dot 1.8s ease-out infinite;
+}
+
+/* Once the dropdown is open the new entries are on screen — the dot has done its job. */
+.main-sidebar .nav-item.menu-open > .nav-link.pw-whats-new-dot > .nav-icon::after {
+    display: none;
+}
+
+/* Release chip beside the sidebar brand ("YIS  v3.8.0") — same switch as the NEW pills.
+   Tinted orange on a transparent ground so it reads on dark and light sidebars alike. */
+.brand-link .pw-version-chip,
+.navbar-brand .pw-version-chip {
+    margin-left: auto;
+    margin-right: 0.25rem;
+    flex-shrink: 0;
+    padding: 0.2em 0.55em;
+    border: 1px solid rgba(243, 112, 33, 0.55);
+    border-radius: 999px;
+    background: rgba(243, 112, 33, 0.14);
+    color: #ff8a3d;
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    line-height: 1.3;
+    white-space: nowrap;
+}
+
+body.sidebar-collapse .main-sidebar:not(:hover):not(.sidebar-focused) .brand-link .pw-version-chip {
+    display: none;
+}
+
+@keyframes pw-new-shimmer {
+    from { background-position: 100% 0; }
+    to   { background-position: -100% 0; }
+}
+
+@keyframes pw-new-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(243, 112, 33, 0.6); }
+    70%  { box-shadow: 0 0 0 6px rgba(243, 112, 33, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(243, 112, 33, 0); }
+}
+
+@keyframes pw-new-dot {
+    0%   { box-shadow: 0 0 0 0 rgba(255, 61, 127, 0.7); }
+    70%  { box-shadow: 0 0 0 6px rgba(255, 61, 127, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 61, 127, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .badge-pw-new,
+    .main-sidebar .nav-link.pw-whats-new-dot > .nav-icon::after,
+    body.sidebar-collapse .main-sidebar .nav-link:has(> p > .badge-pw-new) > .nav-icon::after {
+        animation: none;
+    }
+}

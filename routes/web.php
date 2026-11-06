@@ -27,6 +27,13 @@ use App\Http\Controllers\SurveyController;
 use App\Http\Controllers\ComplianceController;
 use App\Http\Controllers\HpcController;
 use App\Http\Controllers\ClassroomController;
+use App\Http\Controllers\CommunicateController;
+use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\TransportController;
+use App\Http\Controllers\HostelController;
+use App\Http\Controllers\HelpCenterController;
+use App\Http\Controllers\AssetManagementController;
+use App\Http\Controllers\EngagementController;
 
 // Root redirect
 Route::get('/', function () {
@@ -57,6 +64,11 @@ Route::prefix('school')->group(function () {
     Route::get('/collect-fees', [FeeController::class, 'collect'])->name('fees.collect');
     Route::get('/fees/collect', [FeeController::class, 'collect']); // alias
     Route::post('/collect-fees/pay', [FeeController::class, 'storePayment'])->name('fees.pay');
+    Route::post('/collect-fees/store', [FeeController::class, 'storePayment'])->name('fees.collect.store');
+    Route::post('/apply-discount', [FeeController::class, 'applyDiscount'])->name('fees.apply-discount');
+    Route::post('/collect-fees/waive-fine', [FeeController::class, 'waiveFine'])->name('fees.waive-fine');
+    Route::post('/collect-fees/revert/{id}', [FeeController::class, 'revertPayment'])->name('fees.revert-payment');
+    Route::get('/receipts/{id}', [FeeController::class, 'receipt'])->name('fees.receipt.alias');
     Route::get('/due-fees', [FeeController::class, 'dueFees'])->name('fees.due');
     Route::get('/fees/due', [FeeController::class, 'dueFees']); // alias
     Route::get('/transactions', [FeeController::class, 'transactions'])->name('fees.transactions');
@@ -408,7 +420,7 @@ Route::prefix('school')->group(function () {
     Route::get('/surveys', [ModulesController::class, 'surveys'])->name('surveys.index');
     Route::get('/library', [ModulesController::class, 'library'])->name('library.index');
     Route::get('/transport', [ModulesController::class, 'transport'])->name('transport.index');
-    Route::get('/hostel', [ModulesController::class, 'hostel'])->name('hostel.index');
+    Route::get('/hostel', [HostelController::class, 'dashboard'])->name('hostel.index');
     Route::get('/canteen', [ModulesController::class, 'canteen'])->name('canteen.index');
     Route::get('/cctv', [ModulesController::class, 'cctv'])->name('cctv.index');
     Route::get('/certificates', [ModulesController::class, 'certificates'])->name('certificates.index');
@@ -875,8 +887,8 @@ Route::prefix('school')->group(function () {
         Route::get('/library', [ModulesController::class, 'library'])->name('library');
         Route::get('/inventory', [ModulesController::class, 'inventory'])->name('inventory');
         Route::get('/transport', [ModulesController::class, 'transport'])->name('transport');
-        Route::get('/hostel', [ModulesController::class, 'hostel'])->name('hostel');
-        Route::get('/help-center', [ModulesController::class, 'helpCenter'])->name('help-center');
+        Route::get('/hostel', [HostelController::class, 'dashboard'])->name('hostel');
+        Route::get('/help-center', [HelpCenterController::class, 'articles'])->name('help-center');
         Route::get('/assets', [ModulesController::class, 'assets'])->name('assets');
         Route::get('/engagement', [ModulesController::class, 'engagement'])->name('engagement');
         Route::get('/cctv', [ModulesController::class, 'cctv'])->name('cctv');
@@ -967,60 +979,324 @@ Route::prefix('school')->group(function () {
         return app(ModulesController::class)->idCards($request, 'staff');
     })->name('staff.id-card');
 
-    Route::get('/notices', [ModulesController::class, 'communicate']);
-    Route::get('/events', function() { return redirect()->route('modules.communicate', ['tab' => 'events']); });
-    Route::get('/communicate/broadcast', function() { return redirect()->route('modules.communicate', ['tab' => 'broadcast_history']); });
-    Route::get('/communicate/broadcast/create', function() { return redirect()->route('modules.communicate', ['tab' => 'broadcast_create']); });
-    Route::get('/gallery', function() { return redirect()->route('modules.communicate', ['tab' => 'gallery']); });
+    // =========================================================================
+    // COMMUNICATE MODULE (Multi-School ERP Sub-menus)
+    // =========================================================================
+    // 1. Notice Board
+    Route::get('/notices', [CommunicateController::class, 'noticesIndex'])->name('school.notices');
+    Route::get('/notices/create', [CommunicateController::class, 'noticesCreate'])->name('school.notices.create');
+    Route::post('/notices', [CommunicateController::class, 'noticesStore'])->name('school.notices.store');
+    Route::get('/notices/{id}/edit', [CommunicateController::class, 'noticesEdit'])->name('school.notices.edit');
+    Route::put('/notices/{id}', [CommunicateController::class, 'noticesUpdate'])->name('school.notices.update');
+    Route::delete('/notices/{id}', [CommunicateController::class, 'noticesDestroy'])->name('school.notices.destroy');
+
+    // 2. Events & Holidays
+    Route::get('/events', [CommunicateController::class, 'eventsIndex'])->name('school.events');
+    Route::get('/events/create', [CommunicateController::class, 'eventsCreate'])->name('school.events.create');
+    Route::post('/events', [CommunicateController::class, 'eventsStore'])->name('school.events.store');
+    Route::get('/events/{id}/edit', [CommunicateController::class, 'eventsEdit'])->name('school.events.edit');
+    Route::put('/events/{id}', [CommunicateController::class, 'eventsUpdate'])->name('school.events.update');
+    Route::delete('/events/{id}', [CommunicateController::class, 'eventsDestroy'])->name('school.events.destroy');
+
+    // 3. Compose Broadcast & Broadcast History
+    Route::get('/communicate/broadcast/create', [CommunicateController::class, 'broadcastCreate'])->name('school.communicate.broadcast.create');
+    Route::post('/communicate/broadcast/send', [CommunicateController::class, 'broadcastSend'])->name('school.communicate.broadcast.send');
+    Route::get('/communicate/broadcast', [CommunicateController::class, 'broadcastHistory'])->name('school.communicate.broadcast');
+
+    // 4. Broadcast Templates (Placed before {id} to avoid wildcard conflict)
+    Route::get('/communicate/broadcast/templates', [CommunicateController::class, 'templatesIndex'])->name('school.communicate.templates');
+    Route::post('/communicate/broadcast/templates', [CommunicateController::class, 'templatesStore'])->name('school.communicate.templates.store');
+    Route::put('/communicate/broadcast/templates/{id}', [CommunicateController::class, 'templatesUpdate'])->name('school.communicate.templates.update')->whereNumber('id');
+    Route::delete('/communicate/broadcast/templates/{id}', [CommunicateController::class, 'templatesDestroy'])->name('school.communicate.templates.destroy')->whereNumber('id');
+
+    Route::get('/communicate/broadcast/{id}', [CommunicateController::class, 'broadcastShow'])->name('school.communicate.broadcast.show')->whereNumber('id');
+    Route::post('/communicate/broadcast/{id}/resend', [CommunicateController::class, 'broadcastResend'])->name('school.communicate.broadcast.resend')->whereNumber('id');
+
+    // 5. Image Gallery
+    Route::get('/gallery', [CommunicateController::class, 'galleryIndex'])->name('school.gallery');
+    Route::get('/gallery/create', [CommunicateController::class, 'galleryCreate'])->name('school.gallery.create');
+    Route::post('/gallery', [CommunicateController::class, 'galleryStore'])->name('school.gallery.store');
+    Route::get('/gallery/{id}', [CommunicateController::class, 'galleryShow'])->name('school.gallery.show');
+    Route::get('/gallery/{id}/edit', [CommunicateController::class, 'galleryEdit'])->name('school.gallery.edit');
+    Route::put('/gallery/{id}', [CommunicateController::class, 'galleryUpdate'])->name('school.gallery.update');
+    Route::delete('/gallery/{id}', [CommunicateController::class, 'galleryDestroy'])->name('school.gallery.destroy');
+    Route::post('/gallery/{id}/photos', [CommunicateController::class, 'galleryUploadPhotos'])->name('school.gallery.photos.upload');
+    Route::delete('/gallery/{id}/photos/{photoId}', [CommunicateController::class, 'galleryDeletePhoto'])->name('school.gallery.photos.destroy');
+
+    // 6. Comms Wallet
+    Route::get('/comms', [CommunicateController::class, 'commsWallet'])->name('school.comms');
+    Route::post('/comms/topup', [CommunicateController::class, 'commsTopup'])->name('school.comms.topup');
+    Route::post('/comms/channel-source', [CommunicateController::class, 'commsChannelSource'])->name('school.comms.channel');
+    Route::post('/comms/settings', [CommunicateController::class, 'commsSettings'])->name('school.comms.settings');
 
     Route::get('/library/dashboard', [ModulesController::class, 'library']);
     Route::get('/library/issue-return', function() { return redirect()->route('modules.library', ['tab' => 'issue-return']); });
     Route::get('/library/books', function() { return redirect()->route('modules.library', ['tab' => 'books']); });
     Route::get('/library/categories', function() { return redirect()->route('modules.library', ['tab' => 'categories']); });
 
-    Route::get('/inventory/dashboard', [ModulesController::class, 'inventory']);
-    Route::get('/inventory/issue-item', function() { return redirect()->route('modules.inventory', ['tab' => 'issue-item']); });
-    Route::get('/inventory/add-stock', function() { return redirect()->route('modules.inventory', ['tab' => 'add-stock']); });
-    Route::get('/inventory/items', function() { return redirect()->route('modules.inventory', ['tab' => 'items']); });
-    Route::get('/inventory/categories', function() { return redirect()->route('modules.inventory', ['tab' => 'categories']); });
-    Route::get('/inventory/suppliers', function() { return redirect()->route('modules.inventory', ['tab' => 'suppliers']); });
-    Route::get('/inventory/sales/create', function() { return redirect()->route('modules.inventory', ['tab' => 'pos']); });
-    Route::get('/inventory/sales', function() { return redirect()->route('modules.inventory', ['tab' => 'sales']); });
-    Route::get('/inventory/purchase-orders', function() { return redirect()->route('modules.inventory', ['tab' => 'purchase-orders']); });
-    Route::get('/inventory/grns', function() { return redirect()->route('modules.inventory', ['tab' => 'grns']); });
-    Route::get('/inventory/supplier-payments', function() { return redirect()->route('modules.inventory', ['tab' => 'payments']); });
+    // =========================================================================
+    // 🔥 COMPLETE INVENTORY & STOCK SUITE (All 11 Sub-Menus & Sub-Pages)
+    // =========================================================================
+    Route::get('/inventory/dashboard', [InventoryController::class, 'dashboard'])->name('school.inventory.dashboard');
+    Route::get('/inventory', [InventoryController::class, 'dashboard']); // alias
 
-    Route::get('/transport/dashboard', [ModulesController::class, 'transport']);
-    Route::get('/transport/vehicles', function() { return redirect()->route('modules.transport', ['tab' => 'vehicles']); });
-    Route::get('/transport/live', function() { return redirect()->route('modules.transport', ['tab' => 'live']); });
-    Route::get('/transport/routes', function() { return redirect()->route('modules.transport', ['tab' => 'routes']); });
-    Route::get('/transport/tracking', function() { return redirect()->route('modules.transport', ['tab' => 'tracking']); });
-    Route::get('/transport/drivers', function() { return redirect()->route('modules.transport', ['tab' => 'drivers']); });
+    // Items
+    Route::get('/inventory/items', [InventoryController::class, 'itemsIndex'])->name('school.inventory.items');
+    Route::get('/inventory/items/create', [InventoryController::class, 'itemsCreate'])->name('school.inventory.items.create');
+    Route::post('/inventory/items', [InventoryController::class, 'itemsStore'])->name('school.inventory.items.store');
+    Route::get('/inventory/items/{id}/edit', [InventoryController::class, 'itemsEdit'])->name('school.inventory.items.edit')->whereNumber('id');
+    Route::put('/inventory/items/{id}', [InventoryController::class, 'itemsUpdate'])->name('school.inventory.items.update')->whereNumber('id');
+    Route::delete('/inventory/items/{id}', [InventoryController::class, 'itemsDestroy'])->name('school.inventory.items.destroy')->whereNumber('id');
 
-    Route::get('/hostel/dashboard', [ModulesController::class, 'hostel']);
-    Route::get('/hostel/allocations', function() { return redirect()->route('modules.hostel', ['tab' => 'allocations']); });
-    Route::get('/hostel/rooms', function() { return redirect()->route('modules.hostel', ['tab' => 'rooms']); });
-    Route::get('/hostel/room-types', function() { return redirect()->route('modules.hostel', ['tab' => 'room-types']); });
-    Route::get('/hostel/hostels', function() { return redirect()->route('modules.hostel', ['tab' => 'hostels']); });
+    // Categories
+    Route::get('/inventory/categories', [InventoryController::class, 'categoriesIndex'])->name('school.inventory.categories');
+    Route::post('/inventory/categories', [InventoryController::class, 'categoriesStore'])->name('school.inventory.categories.store');
+    Route::put('/inventory/categories/{id}', [InventoryController::class, 'categoriesUpdate'])->name('school.inventory.categories.update')->whereNumber('id');
+    Route::delete('/inventory/categories/{id}', [InventoryController::class, 'categoriesDestroy'])->name('school.inventory.categories.destroy')->whereNumber('id');
 
-    Route::get('/knowledge-base/categories', [ModulesController::class, 'helpCenter']);
-    Route::get('/knowledge-base/articles', function() { return redirect()->route('modules.help-center', ['tab' => 'articles']); });
-    Route::get('/knowledge-base/chatbot', function() { return redirect()->route('modules.help-center', ['tab' => 'chatbot']); });
+    // Suppliers
+    Route::get('/inventory/suppliers', [InventoryController::class, 'suppliersIndex'])->name('school.inventory.suppliers');
+    Route::post('/inventory/suppliers', [InventoryController::class, 'suppliersStore'])->name('school.inventory.suppliers.store');
+    Route::put('/inventory/suppliers/{id}', [InventoryController::class, 'suppliersUpdate'])->name('school.inventory.suppliers.update')->whereNumber('id');
+    Route::delete('/inventory/suppliers/{id}', [InventoryController::class, 'suppliersDestroy'])->name('school.inventory.suppliers.destroy')->whereNumber('id');
 
-    Route::get('/assets/dashboard', [ModulesController::class, 'assets']);
-    Route::get('/assets/assets', function() { return redirect()->route('modules.assets', ['tab' => 'register']); });
-    Route::get('/assets/categories', function() { return redirect()->route('modules.assets', ['tab' => 'categories']); });
-    Route::get('/assets/assignments', function() { return redirect()->route('modules.assets', ['tab' => 'assignments']); });
-    Route::get('/assets/depreciation', function() { return redirect()->route('modules.assets', ['tab' => 'depreciation']); });
-    Route::get('/assets/maintenance', function() { return redirect()->route('modules.assets', ['tab' => 'maintenance']); });
-    Route::get('/assets/disposals', function() { return redirect()->route('modules.assets', ['tab' => 'disposals']); });
-    Route::get('/assets/audits', function() { return redirect()->route('modules.assets', ['tab' => 'audits']); });
-    Route::get('/assets/reports', function() { return redirect()->route('modules.assets', ['tab' => 'reports']); });
+    // Stock Management & Adjustments
+    Route::get('/inventory/add-stock', [InventoryController::class, 'addStockForm'])->name('school.inventory.add-stock');
+    Route::post('/inventory/add-stock', [InventoryController::class, 'addStockStore'])->name('school.inventory.add-stock.store');
+    Route::get('/inventory/adjustments', [InventoryController::class, 'adjustmentsIndex'])->name('school.inventory.adjustments');
+    Route::post('/inventory/adjustments', [InventoryController::class, 'adjustmentsStore'])->name('school.inventory.adjustments.store');
 
-    Route::get('/engagement/designs', [ModulesController::class, 'engagement']);
-    Route::get('/engagement/birthdays', function() { return redirect()->route('modules.engagement', ['tab' => 'birthdays']); });
-    Route::get('/engagement/festivals', function() { return redirect()->route('modules.engagement', ['tab' => 'festivals']); });
-    Route::get('/engagement/settings', function() { return redirect()->route('modules.engagement', ['tab' => 'settings']); });
+    // Issue & Return Items
+    Route::get('/inventory/issue-item', [InventoryController::class, 'issueItemIndex'])->name('school.inventory.issue-item');
+    Route::post('/inventory/issue-item', [InventoryController::class, 'issueItemStore'])->name('school.inventory.issue-item.store');
+    Route::match(['post', 'put'], '/inventory/return-item/{id}', [InventoryController::class, 'returnItem'])->name('school.inventory.return-item')->whereNumber('id');
+
+    // Point of Sale & Sales
+    Route::get('/inventory/sales/create', [InventoryController::class, 'posCreate'])->name('school.inventory.sales.create');
+    Route::post('/inventory/sales', [InventoryController::class, 'posStore'])->name('school.inventory.sales.store');
+    Route::get('/inventory/sales', [InventoryController::class, 'salesHistory'])->name('school.inventory.sales');
+    Route::get('/inventory/sales/{id}', [InventoryController::class, 'salesShow'])->name('school.inventory.sales.show')->whereNumber('id');
+
+    // Purchase Orders
+    Route::get('/inventory/purchase-orders', [InventoryController::class, 'purchaseOrdersIndex'])->name('school.inventory.purchase-orders');
+    Route::get('/inventory/purchase-orders/create', [InventoryController::class, 'purchaseOrdersCreate'])->name('school.inventory.purchase-orders.create');
+    Route::post('/inventory/purchase-orders', [InventoryController::class, 'purchaseOrdersStore'])->name('school.inventory.purchase-orders.store');
+    Route::get('/inventory/purchase-orders/{id}', [InventoryController::class, 'purchaseOrdersShow'])->name('school.inventory.purchase-orders.show')->whereNumber('id');
+    Route::post('/inventory/purchase-orders/{id}/approve', [InventoryController::class, 'purchaseOrdersApprove'])->name('school.inventory.purchase-orders.approve')->whereNumber('id');
+    Route::post('/inventory/purchase-orders/{id}/cancel', [InventoryController::class, 'purchaseOrdersCancel'])->name('school.inventory.purchase-orders.cancel')->whereNumber('id');
+
+    // Goods Receipts (GRNs)
+    Route::get('/inventory/grns', [InventoryController::class, 'grnsIndex'])->name('school.inventory.grns');
+    Route::get('/inventory/grns/{id}', [InventoryController::class, 'grnShow'])->name('school.inventory.grns.show')->whereNumber('id');
+    Route::post('/inventory/purchase-orders/{id}/receive-goods', [InventoryController::class, 'grnReceivePo'])->name('school.inventory.grns.receive')->whereNumber('id');
+
+    // Supplier Payments
+    Route::get('/inventory/supplier-payments', [InventoryController::class, 'supplierPaymentsIndex'])->name('school.inventory.supplier-payments');
+    Route::post('/inventory/supplier-payments', [InventoryController::class, 'supplierPaymentsStore'])->name('school.inventory.supplier-payments.store');
+
+    // Auxiliary Inventory Tabs
+    Route::get('/inventory/vendor-collections', [InventoryController::class, 'vendorCollections'])->name('school.inventory.vendor-collections');
+    Route::get('/inventory/reports', [InventoryController::class, 'reports'])->name('school.inventory.reports');
+    Route::get('/inventory/guide', [InventoryController::class, 'guide'])->name('school.inventory.guide');
+
+    // =========================================================================
+    // 🔥 COMPLETE TRANSPORT MANAGEMENT SUITE
+    // =========================================================================
+    Route::get('/transport/dashboard', [TransportController::class, 'dashboard'])->name('school.transport.dashboard');
+    Route::get('/transport', [TransportController::class, 'dashboard']); // alias
+
+    // Vehicles
+    Route::get('/transport/vehicles', [TransportController::class, 'vehiclesIndex'])->name('school.transport.vehicles');
+    Route::get('/transport/vehicles/create', [TransportController::class, 'vehiclesCreate'])->name('school.transport.vehicles.create');
+    Route::post('/transport/vehicles', [TransportController::class, 'vehiclesStore'])->name('school.transport.vehicles.store');
+    Route::get('/transport/vehicles/{id}/edit', [TransportController::class, 'vehiclesEdit'])->name('school.transport.vehicles.edit')->whereNumber('id');
+    Route::put('/transport/vehicles/{id}', [TransportController::class, 'vehiclesUpdate'])->name('school.transport.vehicles.update')->whereNumber('id');
+    Route::delete('/transport/vehicles/{id}', [TransportController::class, 'vehiclesDestroy'])->name('school.transport.vehicles.destroy')->whereNumber('id');
+
+    // Routes & Route Details
+    Route::get('/transport/routes', [TransportController::class, 'routesIndex'])->name('school.transport.routes');
+    Route::get('/transport/routes/create', [TransportController::class, 'routesCreate'])->name('school.transport.routes.create');
+    Route::post('/transport/routes', [TransportController::class, 'routesStore'])->name('school.transport.routes.store');
+    Route::get('/transport/routes/{id}', [TransportController::class, 'routesShow'])->name('school.transport.routes.show')->whereNumber('id');
+    Route::get('/transport/routes/{id}/edit', [TransportController::class, 'routesEdit'])->name('school.transport.routes.edit')->whereNumber('id');
+    Route::put('/transport/routes/{id}', [TransportController::class, 'routesUpdate'])->name('school.transport.routes.update')->whereNumber('id');
+    Route::delete('/transport/routes/{id}', [TransportController::class, 'routesDestroy'])->name('school.transport.routes.destroy')->whereNumber('id');
+
+    // Route Sub-resources: Schedules (Runs), Stops, Student Assignment
+    Route::post('/transport/routes/{id}/schedules', [TransportController::class, 'scheduleStore'])->name('school.transport.routes.schedules.store')->whereNumber('id');
+    Route::delete('/transport/schedules/{id}', [TransportController::class, 'scheduleDestroy'])->name('school.transport.routes.schedules.destroy')->whereNumber('id');
+    Route::post('/transport/routes/{id}/stops', [TransportController::class, 'stopStore'])->name('school.transport.routes.stops.store')->whereNumber('id');
+    Route::delete('/transport/stops/{id}', [TransportController::class, 'stopDestroy'])->name('school.transport.routes.stops.destroy')->whereNumber('id');
+    Route::post('/transport/routes/{id}/assign', [TransportController::class, 'assignStudent'])->name('school.transport.routes.assign')->whereNumber('id');
+    Route::delete('/transport/students/{id}/remove', [TransportController::class, 'removeStudent'])->name('school.transport.routes.remove-student')->whereNumber('id');
+
+    // Live Operations & Tracking
+    Route::get('/transport/live', [TransportController::class, 'liveOperations'])->name('school.transport.live');
+    Route::get('/transport/tracking', [TransportController::class, 'liveTracking'])->name('school.transport.tracking');
+
+    // Drivers
+    Route::get('/transport/drivers', [TransportController::class, 'driversIndex'])->name('school.transport.drivers');
+    Route::post('/transport/drivers', [TransportController::class, 'driversStore'])->name('school.transport.drivers.store');
+    Route::put('/transport/drivers/{id}', [TransportController::class, 'driversUpdate'])->name('school.transport.drivers.update')->whereNumber('id');
+    Route::delete('/transport/drivers/{id}', [TransportController::class, 'driversDestroy'])->name('school.transport.drivers.destroy')->whereNumber('id');
+
+    // Fee Settings, Boarding Register, Guide
+    Route::get('/transport/fee-settings', [TransportController::class, 'feeSettings'])->name('school.transport.fee-settings');
+    Route::post('/transport/fee-settings', [TransportController::class, 'feeSettingsStore'])->name('school.transport.fee-settings.store');
+    Route::get('/transport/reports/boarding', [TransportController::class, 'boardingReport'])->name('school.transport.reports.boarding');
+    Route::get('/transport/guide', [TransportController::class, 'guide'])->name('school.transport.guide');
+
+    // =========================================================================
+    // 🔥 COMPLETE HOSTEL MANAGEMENT SUITE
+    // =========================================================================
+    Route::get('/hostel/dashboard', [HostelController::class, 'dashboard'])->name('school.hostel.dashboard');
+    Route::get('/hostel', [HostelController::class, 'dashboard'])->name('modules.hostel'); // alias & legacy
+    Route::get('/hostel/guide', [HostelController::class, 'guide'])->name('school.hostel.guide');
+
+    // Student Allocation
+    Route::get('/hostel/allocations', [HostelController::class, 'allocations'])->name('school.hostel.allocations');
+    Route::post('/hostel/allocations', [HostelController::class, 'allocateStudent'])->name('school.hostel.allocations.store');
+    Route::delete('/hostel/allocations/{id}', [HostelController::class, 'unallocateStudent'])->name('school.hostel.allocations.destroy')->whereNumber('id');
+
+    // Rooms
+    Route::get('/hostel/rooms', [HostelController::class, 'rooms'])->name('school.hostel.rooms');
+    Route::post('/hostel/rooms', [HostelController::class, 'storeRoom'])->name('school.hostel.rooms.store');
+    Route::put('/hostel/rooms/{id}', [HostelController::class, 'updateRoom'])->name('school.hostel.rooms.update')->whereNumber('id');
+    Route::delete('/hostel/rooms/{id}', [HostelController::class, 'destroyRoom'])->name('school.hostel.rooms.destroy')->whereNumber('id');
+
+    // Room Types
+    Route::get('/hostel/room-types', [HostelController::class, 'roomTypes'])->name('school.hostel.room-types');
+    Route::post('/hostel/room-types', [HostelController::class, 'storeRoomType'])->name('school.hostel.room-types.store');
+    Route::put('/hostel/room-types/{id}', [HostelController::class, 'updateRoomType'])->name('school.hostel.room-types.update')->whereNumber('id');
+    Route::delete('/hostel/room-types/{id}', [HostelController::class, 'destroyRoomType'])->name('school.hostel.room-types.destroy')->whereNumber('id');
+
+    // Hostels
+    Route::get('/hostel/hostels', [HostelController::class, 'hostels'])->name('school.hostel.hostels');
+    Route::get('/hostel/hostels/create', [HostelController::class, 'createHostel'])->name('school.hostel.hostels.create');
+    Route::post('/hostel/hostels', [HostelController::class, 'storeHostel'])->name('school.hostel.hostels.store');
+    Route::get('/hostel/hostels/{id}/edit', [HostelController::class, 'editHostel'])->name('school.hostel.hostels.edit')->whereNumber('id');
+    Route::put('/hostel/hostels/{id}', [HostelController::class, 'updateHostel'])->name('school.hostel.hostels.update')->whereNumber('id');
+    Route::delete('/hostel/hostels/{id}', [HostelController::class, 'destroyHostel'])->name('school.hostel.hostels.destroy')->whereNumber('id');
+
+    // =========================================================================
+    // 🔥 COMPLETE HELP CENTER & KNOWLEDGE BASE SUITE
+    // =========================================================================
+    // Articles & Knowledge Base
+    Route::get('/knowledge-base/articles', [HelpCenterController::class, 'articles'])->name('school.help-center.articles');
+    Route::get('/knowledge-base/articles/create', [HelpCenterController::class, 'createArticle'])->name('school.help-center.articles.create');
+    Route::post('/knowledge-base/articles', [HelpCenterController::class, 'storeArticle'])->name('school.help-center.articles.store');
+    Route::get('/knowledge-base/articles/{id}', [HelpCenterController::class, 'showArticle'])->name('school.help-center.articles.show')->whereNumber('id');
+    Route::get('/knowledge-base/articles/{id}/edit', [HelpCenterController::class, 'editArticle'])->name('school.help-center.articles.edit')->whereNumber('id');
+    Route::put('/knowledge-base/articles/{id}', [HelpCenterController::class, 'updateArticle'])->name('school.help-center.articles.update')->whereNumber('id');
+    Route::delete('/knowledge-base/articles/{id}', [HelpCenterController::class, 'destroyArticle'])->name('school.help-center.articles.destroy')->whereNumber('id');
+
+    // Categories
+    Route::get('/knowledge-base/categories', [HelpCenterController::class, 'categories'])->name('school.help-center.categories');
+    Route::get('/knowledge-base/categories/create', [HelpCenterController::class, 'createCategory'])->name('school.help-center.categories.create');
+    Route::post('/knowledge-base/categories', [HelpCenterController::class, 'storeCategory'])->name('school.help-center.categories.store');
+    Route::get('/knowledge-base/categories/{id}/edit', [HelpCenterController::class, 'editCategory'])->name('school.help-center.categories.edit')->whereNumber('id');
+    Route::put('/knowledge-base/categories/{id}', [HelpCenterController::class, 'updateCategory'])->name('school.help-center.categories.update')->whereNumber('id');
+    Route::delete('/knowledge-base/categories/{id}', [HelpCenterController::class, 'destroyCategory'])->name('school.help-center.categories.destroy')->whereNumber('id');
+
+    // AI Chatbot
+    Route::get('/knowledge-base/chatbot', [HelpCenterController::class, 'chatbot'])->name('school.help-center.chatbot');
+    Route::get('/knowledge-base/chatbot/my-usage', [HelpCenterController::class, 'chatbotUsage'])->name('school.help-center.chatbot.usage');
+    Route::get('/knowledge-base/chatbot/conversations/{id}', [HelpCenterController::class, 'chatbotConversation'])->name('school.help-center.chatbot.conversation');
+    Route::post('/knowledge-base/chatbot/message', [HelpCenterController::class, 'chatbotMessage'])->name('school.help-center.chatbot.message');
+
+    // Aliases
+    Route::get('/help-center', [HelpCenterController::class, 'articles'])->name('modules.help-center');
+    Route::get('/knowledge-base', [HelpCenterController::class, 'articles']);
+
+    // =========================================================================
+    // ASSET MANAGEMENT FULL SUITE
+    // =========================================================================
+    Route::prefix('assets')->group(function () {
+        // 1. Dashboard
+        Route::get('/dashboard', [AssetManagementController::class, 'dashboard'])->name('school.assets.dashboard');
+
+        // 2. Asset Register
+        Route::get('/assets', [AssetManagementController::class, 'assetsIndex'])->name('school.assets.assets');
+        Route::get('/assets/create', [AssetManagementController::class, 'assetCreate'])->name('school.assets.assets.create');
+        Route::post('/assets', [AssetManagementController::class, 'assetStore'])->name('school.assets.assets.store');
+        Route::get('/assets/tags/print', [AssetManagementController::class, 'assetTagsPrintSheet'])->name('school.assets.assets.tags.print');
+        Route::get('/assets/{id}', [AssetManagementController::class, 'assetShow'])->name('school.assets.assets.show')->whereNumber('id');
+        Route::get('/assets/{id}/edit', [AssetManagementController::class, 'assetEdit'])->name('school.assets.assets.edit')->whereNumber('id');
+        Route::put('/assets/{id}', [AssetManagementController::class, 'assetUpdate'])->name('school.assets.assets.update')->whereNumber('id');
+        Route::delete('/assets/{id}', [AssetManagementController::class, 'assetDestroy'])->name('school.assets.assets.destroy')->whereNumber('id');
+        Route::get('/assets/{id}/tag', [AssetManagementController::class, 'assetTagSingle'])->name('school.assets.assets.tag')->whereNumber('id');
+
+        // 3. Categories
+        Route::get('/categories', [AssetManagementController::class, 'categoriesIndex'])->name('school.assets.categories');
+        Route::post('/categories', [AssetManagementController::class, 'categoryStore'])->name('school.assets.categories.store');
+        Route::put('/categories/{id}', [AssetManagementController::class, 'categoryUpdate'])->name('school.assets.categories.update')->whereNumber('id');
+        Route::delete('/categories/{id}', [AssetManagementController::class, 'categoryDestroy'])->name('school.assets.categories.destroy')->whereNumber('id');
+
+        // 4. Assignments / Allocations
+        Route::get('/assignments', [AssetManagementController::class, 'assignmentsIndex'])->name('school.assets.assignments');
+        Route::post('/assignments', [AssetManagementController::class, 'assignmentStore'])->name('school.assets.assignments.store');
+        Route::post('/assignments/{id}/return', [AssetManagementController::class, 'assignmentReturn'])->name('school.assets.assignments.return')->whereNumber('id');
+        Route::post('/assignments/{id}/transfer', [AssetManagementController::class, 'assignmentTransfer'])->name('school.assets.assignments.transfer')->whereNumber('id');
+
+        // 5. Depreciation
+        Route::get('/depreciation', [AssetManagementController::class, 'depreciationIndex'])->name('school.assets.depreciation');
+        Route::post('/depreciation/run', [AssetManagementController::class, 'depreciationRun'])->name('school.assets.depreciation.run');
+
+        // 6. Maintenance
+        Route::get('/maintenance', [AssetManagementController::class, 'maintenanceIndex'])->name('school.assets.maintenance');
+        Route::post('/maintenance/schedules', [AssetManagementController::class, 'scheduleStore'])->name('school.assets.maintenance.schedules.store');
+        Route::put('/maintenance/schedules/{id}', [AssetManagementController::class, 'scheduleUpdate'])->name('school.assets.maintenance.schedules.update')->whereNumber('id');
+        Route::delete('/maintenance/schedules/{id}', [AssetManagementController::class, 'scheduleDestroy'])->name('school.assets.maintenance.schedules.destroy')->whereNumber('id');
+        Route::post('/maintenance/logs', [AssetManagementController::class, 'logStore'])->name('school.assets.maintenance.logs.store');
+        Route::post('/maintenance/logs/{id}/complete', [AssetManagementController::class, 'logComplete'])->name('school.assets.maintenance.logs.complete')->whereNumber('id');
+
+        // 7. Disposals
+        Route::get('/disposals', [AssetManagementController::class, 'disposalsIndex'])->name('school.assets.disposals');
+        Route::post('/disposals', [AssetManagementController::class, 'disposalStore'])->name('school.assets.disposals.store');
+
+        // 8. Audits
+        Route::get('/audits', [AssetManagementController::class, 'auditsIndex'])->name('school.assets.audits');
+        Route::get('/audits/create', [AssetManagementController::class, 'auditCreate'])->name('school.assets.audits.create');
+        Route::post('/audits', [AssetManagementController::class, 'auditStore'])->name('school.assets.audits.store');
+        Route::get('/audits/{id}', [AssetManagementController::class, 'auditShow'])->name('school.assets.audits.show')->whereNumber('id');
+        Route::post('/audits/{id}/items/{itemId}/verify', [AssetManagementController::class, 'auditItemVerify'])->name('school.assets.audits.verify')->whereNumber('id')->whereNumber('itemId');
+        Route::post('/audits/{id}/complete', [AssetManagementController::class, 'auditComplete'])->name('school.assets.audits.complete')->whereNumber('id');
+
+        // 9. Reports
+        Route::get('/reports', [AssetManagementController::class, 'reportsIndex'])->name('school.assets.reports');
+        Route::get('/reports/{type}', [AssetManagementController::class, 'reportShow'])->name('school.assets.reports.show');
+        Route::get('/reports/{type}/export', [AssetManagementController::class, 'reportExport'])->name('school.assets.reports.export');
+    });
+
+    // =========================================================================
+    // ENGAGEMENT FULL SUITE (CREATIVES, BIRTHDAYS, FESTIVALS, SETTINGS)
+    // =========================================================================
+    Route::prefix('engagement')->group(function () {
+        // 1. Creatives / Designs
+        Route::get('/designs', [EngagementController::class, 'designsIndex'])->name('school.engagement.designs');
+        Route::get('/designs/create', [EngagementController::class, 'designCreate'])->name('school.engagement.designs.create');
+        Route::post('/designs', [EngagementController::class, 'designStore'])->name('school.engagement.designs.store');
+        Route::get('/designs/{id}/preview', [EngagementController::class, 'designPreview'])->name('school.engagement.designs.preview')->whereNumber('id');
+        Route::get('/designs/{id}/edit', [EngagementController::class, 'designEdit'])->name('school.engagement.designs.edit')->whereNumber('id');
+        Route::put('/designs/{id}', [EngagementController::class, 'designUpdate'])->name('school.engagement.designs.update')->whereNumber('id');
+        Route::delete('/designs/{id}', [EngagementController::class, 'designDestroy'])->name('school.engagement.designs.destroy')->whereNumber('id');
+        Route::post('/designs/{id}/clone', [EngagementController::class, 'designClone'])->name('school.engagement.designs.clone')->whereNumber('id');
+
+        // 2. Birthday Manager
+        Route::get('/birthdays', [EngagementController::class, 'birthdaysIndex'])->name('school.engagement.birthdays');
+        Route::post('/birthdays/send', [EngagementController::class, 'sendBirthdayGreeting'])->name('school.engagement.birthdays.send');
+
+        // 3. Festival Greetings
+        Route::get('/festivals', [EngagementController::class, 'festivalsIndex'])->name('school.engagement.festivals');
+        Route::post('/festivals', [EngagementController::class, 'festivalStore'])->name('school.engagement.festivals.store');
+        Route::post('/festivals/send', [EngagementController::class, 'sendFestivalGreeting'])->name('school.engagement.festivals.send');
+        Route::delete('/festivals/{id}', [EngagementController::class, 'festivalDestroy'])->name('school.engagement.festivals.destroy')->whereNumber('id');
+
+        // 4. Auto-send Settings
+        Route::get('/settings', [EngagementController::class, 'settingsIndex'])->name('school.engagement.settings');
+        Route::put('/settings', [EngagementController::class, 'settingsUpdate'])->name('school.engagement.settings.update');
+        Route::post('/settings/test', [EngagementController::class, 'sendTestGreeting'])->name('school.engagement.settings.test');
+    });
 
     Route::get('/cctv/wall', [ModulesController::class, 'cctv']);
     Route::get('/cctv/cameras', function() { return redirect()->route('modules.cctv', ['tab' => 'cameras']); });

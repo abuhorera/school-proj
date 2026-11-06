@@ -1,0 +1,41 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Display Size & Density modes — see resources/views/partials/display-mode.blade.php
+
+   Every rule is scoped to an attribute that only exists when a user, school
+   or platform has opted in:
+     html[data-pw-scale]                 a non-default Display Size (CSS zoom)
+     html[data-pw-density="compact"]     Compact spacing
+   With the defaults nothing here matches, and the panel renders as before.
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* Print / PDF always render at the natural size. */
+@media print {
+    html[data-pw-scale] { zoom: 1 !important; }
+}
+
+/* ── Display Size: vh/vw shrink under CSS zoom, so the AdminLTE pieces that
+      must fill the screen are re-based on --pw-z (set with the zoom).
+      Verified P0 (Chromium + Firefox): sidebar gap 86px → 0, backdrop full. ── */
+html[data-pw-scale] .layout-fixed .main-sidebar { height: auto; } /* top:0 + bottom:0 already stretch it */
+html[data-pw-scale] .layout-fixed .wrapper .sidebar { height: calc(100vh / var(--pw-z, 1) - (3.5rem + 1px)); }
+html[data-pw-scale] .layout-fixed.text-sm .wrapper .sidebar { height: calc(100vh / var(--pw-z, 1) - (2.93725rem + 1px)); }
+html[data-pw-scale] .modal-backdrop { width: calc(100vw / var(--pw-z, 1)); height: calc(100vh / var(--pw-z, 1)); }
+html[data-pw-scale] .modal-dialog-scrollable .modal-content { max-height: calc(100vh / var(--pw-z, 1) - 3.5rem); }
+html[data-pw-scale] .vh-100 { height: calc(100vh / var(--pw-z, 1)) !important; }
+html[data-pw-scale] .min-vh-100 { min-height: calc(100vh / var(--pw-z, 1)) !important; }
+
+/* ── Density: Compact ── */
+html[data-pw-density="compact"] .content-header { padding-top: 8px; padding-bottom: 8px; }
+html[data-pw-density="compact"] .card { margin-bottom: .85rem; }
+html[data-pw-density="compact"] .card-header { padding: .5rem 1rem; }
+html[data-pw-density="compact"] .card-body { padding: .85rem 1rem; }
+html[data-pw-density="compact"] .card-footer { padding: .5rem 1rem; }
+html[data-pw-density="compact"] .table:not(.table-sm) th,
+html[data-pw-density="compact"] .table:not(.table-sm) td { padding: .45rem .65rem; }
+html[data-pw-density="compact"] .tpl-card-head { padding: 9px 13px; }
+html[data-pw-density="compact"] .tpl-card-body { padding: 12px; }
+html[data-pw-density="compact"] .tpl-table thead th { padding: 8px 12px; }
+html[data-pw-density="compact"] .tpl-table tbody td { padding: 7px 12px; }
+html[data-pw-density="compact"] .form-group { margin-bottom: .7rem; }
+html[data-pw-density="compact"] .nav-sidebar .nav-link { padding-top: .35rem; padding-bottom: .35rem; }
+html[data-pw-density="compact"] .nav-sidebar .nav-header { padding-top: .35rem; padding-bottom: .35rem; }

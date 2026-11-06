@@ -1034,19 +1034,7 @@ class ModulesController extends Controller
     // =========================================================================
     public function hostel(Request $request)
     {
-        $school = School::first();
-        $tab = $request->query('tab', 'dashboard');
-        $blocks = DB::table('hostel_blocks')->get();
-        $rooms = DB::table('hostel_rooms')
-            ->join('hostel_blocks', 'hostel_rooms.block_id', '=', 'hostel_blocks.id')
-            ->select('hostel_rooms.*', 'hostel_blocks.name as block_name')
-            ->get();
-        $allocations = DB::table('hostel_allocations')
-            ->join('hostel_rooms', 'hostel_allocations.room_id', '=', 'hostel_rooms.id')
-            ->select('hostel_allocations.*', 'hostel_rooms.room_number')
-            ->get();
-
-        return view('modules.hostel', compact('school', 'tab', 'blocks', 'rooms', 'allocations'));
+        return redirect()->route('school.hostel.dashboard');
     }
 
     // =========================================================================

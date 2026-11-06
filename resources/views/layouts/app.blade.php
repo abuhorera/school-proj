@@ -6,6 +6,7 @@
     <title>@yield('title', 'Dashboard') - {{ $school->name ?? 'Multi School ERP' }}</title>
     <!-- 1. Primary Local Compiled CSS (Instant 0ms load, offline support) -->
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/tpl-theme.css') }}">
 
     <!-- 2. FontAwesome 6 Icons (Local primary with CDN fallback) -->
     <link rel="stylesheet" href="{{ asset('css/all.min.css') }}">
@@ -759,7 +760,9 @@
                 </div>
 
                 <!-- 6. Communicate -->
-                @php $isCommActive = request()->routeIs('modules.communicate*'); @endphp
+                @php 
+                    $isCommActive = request()->routeIs('school.notices*') || request()->routeIs('school.events*') || request()->routeIs('school.communicate*') || request()->routeIs('school.gallery*') || request()->routeIs('school.comms*') || request()->routeIs('modules.communicate*'); 
+                @endphp
                 <div class="treeview-parent-item">
                     <a href="javascript:void(0)" onclick="toggleMenu(event, 'menu-communicate')" id="menu-communicate-parent" class="w-full flex items-center justify-between px-3 py-2 rounded-xl font-medium text-left transition hover:bg-slate-800 hover:text-white {{ $isCommActive ? 'bg-slate-800 text-sky-400' : 'text-slate-400' }}">
                         <div class="flex items-center space-x-2.5">
@@ -769,11 +772,12 @@
                         <i id="menu-communicate-arrow" class="fa-solid fa-chevron-right text-[9px] text-slate-600 {{ $isCommActive ? 'rotate-90 text-sky-400' : '' }}"></i>
                     </a>
                     <ul id="menu-communicate" class="mt-1 space-y-0.5 pl-6 border-l border-slate-800 ml-5 {{ $isCommActive ? '' : 'hidden' }}">
-                        <li><a href="{{ route('modules.communicate', ['tab' => 'notices']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isCommActive && request('tab', 'notices') == 'notices' ? 'active-sublink' : '' }}">Notice Board</a></li>
-                        <li><a href="{{ route('modules.communicate', ['tab' => 'events']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isCommActive && request('tab') == 'events' ? 'active-sublink' : '' }}">Events &amp; Holidays</a></li>
-                        <li><a href="{{ route('modules.communicate', ['tab' => 'broadcast_create']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isCommActive && request('tab') == 'broadcast_create' ? 'active-sublink' : '' }}">Compose Broadcast</a></li>
-                        <li><a href="{{ route('modules.communicate', ['tab' => 'broadcast_history']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isCommActive && request('tab') == 'broadcast_history' ? 'active-sublink' : '' }}">Broadcast History</a></li>
-                        <li><a href="{{ route('modules.communicate', ['tab' => 'gallery']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isCommActive && request('tab') == 'gallery' ? 'active-sublink' : '' }}">Image Gallery</a></li>
+                        <li><a href="{{ route('school.notices') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.notices*') ? 'active-sublink' : '' }}">Notice Board</a></li>
+                        <li><a href="{{ route('school.events') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.events*') ? 'active-sublink' : '' }}">Events &amp; Holidays</a></li>
+                        <li><a href="{{ route('school.communicate.broadcast.create') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.communicate.broadcast.create') ? 'active-sublink' : '' }}">Compose Broadcast</a></li>
+                        <li><a href="{{ route('school.communicate.broadcast') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.communicate.broadcast') || request()->routeIs('school.communicate.broadcast.show') ? 'active-sublink' : '' }}">Broadcast History</a></li>
+                        <li><a href="{{ route('school.gallery') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.gallery*') ? 'active-sublink' : '' }}">Image Gallery</a></li>
+                        <li><a href="{{ route('school.comms') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.comms*') ? 'active-sublink' : '' }}">Comms Wallet</a></li>
                     </ul>
                 </div>
 
@@ -796,7 +800,7 @@
                 </div>
 
                 <!-- 8. Inventory -->
-                @php $isInventoryActive = request()->routeIs('modules.inventory*'); @endphp
+                @php $isInventoryActive = request()->routeIs('school.inventory*') || request()->routeIs('modules.inventory*'); @endphp
                 <div class="treeview-parent-item">
                     <a href="javascript:void(0)" onclick="toggleMenu(event, 'menu-inventory')" id="menu-inventory-parent" class="w-full flex items-center justify-between px-3 py-2 rounded-xl font-medium text-left transition hover:bg-slate-800 hover:text-white {{ $isInventoryActive ? 'bg-slate-800 text-emerald-400' : 'text-slate-400' }}">
                         <div class="flex items-center space-x-2.5">
@@ -806,17 +810,22 @@
                         <i id="menu-inventory-arrow" class="fa-solid fa-chevron-right text-[9px] text-slate-600 {{ $isInventoryActive ? 'rotate-90 text-emerald-400' : '' }}"></i>
                     </a>
                     <ul id="menu-inventory" class="mt-1 space-y-0.5 pl-6 border-l border-slate-800 ml-5 {{ $isInventoryActive ? '' : 'hidden' }}">
-                        <li><a href="{{ route('modules.inventory', ['tab' => 'dashboard']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isInventoryActive && request('tab', 'dashboard') == 'dashboard' ? 'active-sublink' : '' }}">Inventory Dashboard</a></li>
-                        <li><a href="{{ route('modules.inventory', ['tab' => 'items']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isInventoryActive && request('tab') == 'items' ? 'active-sublink' : '' }}">Item List</a></li>
-                        <li><a href="{{ route('modules.inventory', ['tab' => 'categories']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isInventoryActive && request('tab') == 'categories' ? 'active-sublink' : '' }}">Item Categories</a></li>
-                        <li><a href="{{ route('modules.inventory', ['tab' => 'suppliers']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isInventoryActive && request('tab') == 'suppliers' ? 'active-sublink' : '' }}">Suppliers</a></li>
-                        <li><a href="{{ route('modules.inventory', ['tab' => 'pos']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isInventoryActive && request('tab') == 'pos' ? 'active-sublink' : '' }}">Point of Sale</a></li>
-                        <li><a href="{{ route('modules.inventory', ['tab' => 'purchase-orders']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isInventoryActive && request('tab') == 'purchase-orders' ? 'active-sublink' : '' }}">Purchase Orders</a></li>
+                        <li><a href="{{ route('school.inventory.dashboard') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.inventory.dashboard') ? 'active-sublink' : '' }}">Inventory Dashboard</a></li>
+                        <li><a href="{{ route('school.inventory.issue-item') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.inventory.issue-item') ? 'active-sublink' : '' }}">Issue Item</a></li>
+                        <li><a href="{{ route('school.inventory.add-stock') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.inventory.add-stock') ? 'active-sublink' : '' }}">Add Stock</a></li>
+                        <li><a href="{{ route('school.inventory.items') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.inventory.items*') ? 'active-sublink' : '' }}">Item List</a></li>
+                        <li><a href="{{ route('school.inventory.categories') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.inventory.categories') ? 'active-sublink' : '' }}">Item Categories</a></li>
+                        <li><a href="{{ route('school.inventory.suppliers') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.inventory.suppliers') ? 'active-sublink' : '' }}">Suppliers</a></li>
+                        <li><a href="{{ route('school.inventory.sales.create') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.inventory.sales.create') ? 'active-sublink' : '' }}">Point of Sale</a></li>
+                        <li><a href="{{ route('school.inventory.sales') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.inventory.sales') ? 'active-sublink' : '' }}">Sales History</a></li>
+                        <li><a href="{{ route('school.inventory.purchase-orders') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.inventory.purchase-orders*') ? 'active-sublink' : '' }}">Purchase Orders</a></li>
+                        <li><a href="{{ route('school.inventory.grns') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.inventory.grns*') ? 'active-sublink' : '' }}">Goods Receipts</a></li>
+                        <li><a href="{{ route('school.inventory.supplier-payments') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.inventory.supplier-payments') ? 'active-sublink' : '' }}">Supplier Payments</a></li>
                     </ul>
                 </div>
 
                 <!-- 9. Transport -->
-                @php $isTransportActive = request()->routeIs('modules.transport*') || request()->routeIs('transport.*'); @endphp
+                @php $isTransportActive = request()->routeIs('school.transport*') || request()->routeIs('modules.transport*'); @endphp
                 <div class="treeview-parent-item">
                     <a href="javascript:void(0)" onclick="toggleMenu(event, 'menu-transport')" id="menu-transport-parent" class="w-full flex items-center justify-between px-3 py-2 rounded-xl font-medium text-left transition hover:bg-slate-800 hover:text-white {{ $isTransportActive ? 'bg-slate-800 text-amber-400' : 'text-slate-400' }}">
                         <div class="flex items-center space-x-2.5">
@@ -826,34 +835,36 @@
                         <i id="menu-transport-arrow" class="fa-solid fa-chevron-right text-[9px] text-slate-600 {{ $isTransportActive ? 'rotate-90 text-amber-400' : '' }}"></i>
                     </a>
                     <ul id="menu-transport" class="mt-1 space-y-0.5 pl-6 border-l border-slate-800 ml-5 {{ $isTransportActive ? '' : 'hidden' }}">
-                        <li><a href="{{ route('modules.transport', ['tab' => 'dashboard']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isTransportActive && request('tab', 'dashboard') == 'dashboard' ? 'active-sublink' : '' }}">Transport Dashboard</a></li>
-                        <li><a href="{{ route('modules.transport', ['tab' => 'vehicles']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isTransportActive && request('tab') == 'vehicles' ? 'active-sublink' : '' }}">Manage Vehicles</a></li>
-                        <li><a href="{{ route('modules.transport', ['tab' => 'routes']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isTransportActive && request('tab') == 'routes' ? 'active-sublink' : '' }}">Manage Routes</a></li>
-                        <li><a href="{{ route('modules.transport', ['tab' => 'tracking']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-emerald-400 font-bold hover:text-emerald-300 hover:bg-slate-800 {{ $isTransportActive && request('tab') == 'tracking' ? 'active-sublink' : '' }}">Live Vehicle Tracking</a></li>
-                        <li><a href="{{ route('modules.transport', ['tab' => 'drivers']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isTransportActive && request('tab') == 'drivers' ? 'active-sublink' : '' }}">Drivers</a></li>
+                        <li><a href="{{ route('school.transport.dashboard') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.transport.dashboard') ? 'active-sublink' : '' }}">Transport Dashboard</a></li>
+                        <li><a href="{{ route('school.transport.vehicles') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.transport.vehicles*') ? 'active-sublink' : '' }}">Manage Vehicles</a></li>
+                        <li><a href="{{ route('school.transport.live') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.transport.live') ? 'active-sublink' : '' }}">Live Operations</a></li>
+                        <li><a href="{{ route('school.transport.routes') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.transport.routes*') ? 'active-sublink' : '' }}">Manage Routes</a></li>
+                        <li><a href="{{ route('school.transport.tracking') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-emerald-400 font-bold hover:text-emerald-300 hover:bg-slate-800 {{ request()->routeIs('school.transport.tracking') ? 'active-sublink' : '' }}">Live Vehicle Tracking</a></li>
+                        <li><a href="{{ route('school.transport.drivers') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.transport.drivers*') ? 'active-sublink' : '' }}">Drivers</a></li>
                     </ul>
                 </div>
 
                 <!-- 10. Hostel -->
-                @php $isHostelActive = request()->routeIs('modules.hostel*') || request()->routeIs('hostel.*'); @endphp
+                @php $isHostelActive = request()->routeIs('school.hostel*') || request()->routeIs('modules.hostel*'); @endphp
                 <div class="treeview-parent-item">
-                    <a href="javascript:void(0)" onclick="toggleMenu(event, 'menu-hostel')" id="menu-hostel-parent" class="w-full flex items-center justify-between px-3 py-2 rounded-xl font-medium text-left transition hover:bg-slate-800 hover:text-white {{ $isHostelActive ? 'bg-slate-800 text-rose-400' : 'text-slate-400' }}">
+                    <a href="javascript:void(0)" onclick="toggleMenu(event, 'menu-hostel')" id="menu-hostel-parent" class="w-full flex items-center justify-between px-3 py-2 rounded-xl font-medium text-left transition hover:bg-slate-800 hover:text-white {{ $isHostelActive ? 'bg-slate-800 text-orange-400' : 'text-slate-400' }}">
                         <div class="flex items-center space-x-2.5">
                             <i class="fa-solid fa-hotel w-4 text-center"></i>
                             <span>Hostel</span>
                         </div>
-                        <i id="menu-hostel-arrow" class="fa-solid fa-chevron-right text-[9px] text-slate-600 {{ $isHostelActive ? 'rotate-90 text-rose-400' : '' }}"></i>
+                        <i id="menu-hostel-arrow" class="fa-solid fa-chevron-right text-[9px] text-slate-600 {{ $isHostelActive ? 'rotate-90 text-orange-400' : '' }}"></i>
                     </a>
                     <ul id="menu-hostel" class="mt-1 space-y-0.5 pl-6 border-l border-slate-800 ml-5 {{ $isHostelActive ? '' : 'hidden' }}">
-                        <li><a href="{{ route('modules.hostel', ['tab' => 'dashboard']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isHostelActive && request('tab', 'dashboard') == 'dashboard' ? 'active-sublink' : '' }}">Hostel Dashboard</a></li>
-                        <li><a href="{{ route('modules.hostel', ['tab' => 'allocations']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isHostelActive && request('tab') == 'allocations' ? 'active-sublink' : '' }}">Student Allocation</a></li>
-                        <li><a href="{{ route('modules.hostel', ['tab' => 'rooms']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isHostelActive && request('tab') == 'rooms' ? 'active-sublink' : '' }}">Manage Rooms</a></li>
-                        <li><a href="{{ route('modules.hostel', ['tab' => 'hostels']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isHostelActive && request('tab') == 'hostels' ? 'active-sublink' : '' }}">Manage Hostels</a></li>
+                        <li><a href="{{ route('school.hostel.dashboard') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.hostel.dashboard') ? 'active-sublink' : '' }}">Hostel Dashboard</a></li>
+                        <li><a href="{{ route('school.hostel.allocations') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.hostel.allocations*') ? 'active-sublink' : '' }}">Student Allocation</a></li>
+                        <li><a href="{{ route('school.hostel.rooms') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.hostel.rooms*') ? 'active-sublink' : '' }}">Manage Rooms</a></li>
+                        <li><a href="{{ route('school.hostel.room-types') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.hostel.room-types*') ? 'active-sublink' : '' }}">Room Types</a></li>
+                        <li><a href="{{ route('school.hostel.hostels') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.hostel.hostels*') ? 'active-sublink' : '' }}">Manage Hostels</a></li>
                     </ul>
                 </div>
 
                 <!-- 11. Help Center -->
-                @php $isHelpActive = request()->routeIs('modules.help-center*'); @endphp
+                @php $isHelpActive = request()->routeIs('school.help-center*') || request()->routeIs('modules.help-center*'); @endphp
                 <div class="treeview-parent-item">
                     <a href="javascript:void(0)" onclick="toggleMenu(event, 'menu-help-center')" id="menu-help-center-parent" class="w-full flex items-center justify-between px-3 py-2 rounded-xl font-medium text-left transition hover:bg-slate-800 hover:text-white {{ $isHelpActive ? 'bg-slate-800 text-cyan-400' : 'text-slate-400' }}">
                         <div class="flex items-center space-x-2.5">
@@ -863,33 +874,37 @@
                         <i id="menu-help-center-arrow" class="fa-solid fa-chevron-right text-[9px] text-slate-600 {{ $isHelpActive ? 'rotate-90 text-cyan-400' : '' }}"></i>
                     </a>
                     <ul id="menu-help-center" class="mt-1 space-y-0.5 pl-6 border-l border-slate-800 ml-5 {{ $isHelpActive ? '' : 'hidden' }}">
-                        <li><a href="{{ route('modules.help-center', ['tab' => 'categories']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isHelpActive && request('tab', 'categories') == 'categories' ? 'active-sublink' : '' }}">Manage Categories</a></li>
-                        <li><a href="{{ route('modules.help-center', ['tab' => 'articles']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isHelpActive && request('tab') == 'articles' ? 'active-sublink' : '' }}">Browse Articles</a></li>
-                        <li><a href="{{ route('modules.help-center', ['tab' => 'chatbot']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-purple-400 font-bold hover:text-purple-300 hover:bg-slate-800 {{ $isHelpActive && request('tab') == 'chatbot' ? 'active-sublink' : '' }}">AI Chatbot</a></li>
+                        <li><a href="{{ route('school.help-center.categories') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.help-center.categories*') ? 'active-sublink' : '' }}">Manage Categories</a></li>
+                        <li><a href="{{ route('school.help-center.articles') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.help-center.articles*') ? 'active-sublink' : '' }}">Browse Articles</a></li>
+                        <li><a href="{{ route('school.help-center.chatbot') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-purple-400 font-bold hover:text-purple-300 hover:bg-slate-800 {{ request()->routeIs('school.help-center.chatbot*') ? 'active-sublink' : '' }}">AI Chatbot</a></li>
                     </ul>
                 </div>
 
                 <!-- 12. Asset Management -->
-                @php $isAssetActive = request()->routeIs('modules.assets*'); @endphp
+                @php $isAssetActive = request()->routeIs('school.assets.*') || request()->routeIs('modules.assets*'); @endphp
                 <div class="treeview-parent-item">
-                    <a href="javascript:void(0)" onclick="toggleMenu(event, 'menu-assets')" id="menu-assets-parent" class="w-full flex items-center justify-between px-3 py-2 rounded-xl font-medium text-left transition hover:bg-slate-800 hover:text-white {{ $isAssetActive ? 'bg-slate-800 text-orange-400' : 'text-slate-400' }}">
+                    <a href="javascript:void(0)" onclick="toggleMenu(event, 'menu-assets')" id="menu-assets-parent" class="w-full flex items-center justify-between px-3 py-2 rounded-xl font-medium text-left transition hover:bg-slate-800 hover:text-white {{ $isAssetActive ? 'bg-slate-800 text-sky-400' : 'text-slate-400' }}">
                         <div class="flex items-center space-x-2.5">
                             <i class="fa-solid fa-boxes-packing w-4 text-center"></i>
                             <span>Asset Management</span>
                         </div>
-                        <i id="menu-assets-arrow" class="fa-solid fa-chevron-right text-[9px] text-slate-600 {{ $isAssetActive ? 'rotate-90 text-orange-400' : '' }}"></i>
+                        <i id="menu-assets-arrow" class="fa-solid fa-chevron-right text-[9px] text-slate-600 {{ $isAssetActive ? 'rotate-90 text-sky-400' : '' }}"></i>
                     </a>
                     <ul id="menu-assets" class="mt-1 space-y-0.5 pl-6 border-l border-slate-800 ml-5 {{ $isAssetActive ? '' : 'hidden' }}">
-                        <li><a href="{{ route('modules.assets', ['tab' => 'dashboard']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isAssetActive && request('tab', 'dashboard') == 'dashboard' ? 'active-sublink' : '' }}">Asset Dashboard</a></li>
-                        <li><a href="{{ route('modules.assets', ['tab' => 'register']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isAssetActive && request('tab') == 'register' ? 'active-sublink' : '' }}">Asset Register</a></li>
-                        <li><a href="{{ route('modules.assets', ['tab' => 'depreciation']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isAssetActive && request('tab') == 'depreciation' ? 'active-sublink' : '' }}">Asset Depreciation</a></li>
-                        <li><a href="{{ route('modules.assets', ['tab' => 'maintenance']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isAssetActive && request('tab') == 'maintenance' ? 'active-sublink' : '' }}">Asset Maintenance</a></li>
-                        <li><a href="{{ route('modules.assets', ['tab' => 'audits']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isAssetActive && request('tab') == 'audits' ? 'active-sublink' : '' }}">Asset Audits</a></li>
+                        <li><a href="{{ route('school.assets.dashboard') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.assets.dashboard') ? 'active-sublink text-sky-400 font-semibold' : '' }}">Asset Dashboard</a></li>
+                        <li><a href="{{ route('school.assets.assets') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.assets.assets*') ? 'active-sublink text-sky-400 font-semibold' : '' }}">Asset Register</a></li>
+                        <li><a href="{{ route('school.assets.categories') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.assets.categories*') ? 'active-sublink text-sky-400 font-semibold' : '' }}">Asset Categories</a></li>
+                        <li><a href="{{ route('school.assets.assignments') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.assets.assignments*') ? 'active-sublink text-sky-400 font-semibold' : '' }}">Asset Assignments</a></li>
+                        <li><a href="{{ route('school.assets.depreciation') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.assets.depreciation*') ? 'active-sublink text-sky-400 font-semibold' : '' }}">Asset Depreciation</a></li>
+                        <li><a href="{{ route('school.assets.maintenance') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.assets.maintenance*') ? 'active-sublink text-sky-400 font-semibold' : '' }}">Asset Maintenance</a></li>
+                        <li><a href="{{ route('school.assets.disposals') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.assets.disposals*') ? 'active-sublink text-sky-400 font-semibold' : '' }}">Asset Disposals</a></li>
+                        <li><a href="{{ route('school.assets.audits') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.assets.audits*') ? 'active-sublink text-sky-400 font-semibold' : '' }}">Asset Audits</a></li>
+                        <li><a href="{{ route('school.assets.reports') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.assets.reports*') ? 'active-sublink text-sky-400 font-semibold' : '' }}">Asset Reports</a></li>
                     </ul>
                 </div>
 
                 <!-- 13. Engagement -->
-                @php $isEngageActive = request()->routeIs('modules.engagement*'); @endphp
+                @php $isEngageActive = request()->routeIs('school.engagement.*') || request()->routeIs('modules.engagement*'); @endphp
                 <div class="treeview-parent-item">
                     <a href="javascript:void(0)" onclick="toggleMenu(event, 'menu-engagement')" id="menu-engagement-parent" class="w-full flex items-center justify-between px-3 py-2 rounded-xl font-medium text-left transition hover:bg-slate-800 hover:text-white {{ $isEngageActive ? 'bg-slate-800 text-pink-400' : 'text-slate-400' }}">
                         <div class="flex items-center space-x-2.5">
@@ -899,10 +914,10 @@
                         <i id="menu-engagement-arrow" class="fa-solid fa-chevron-right text-[9px] text-slate-600 {{ $isEngageActive ? 'rotate-90 text-pink-400' : '' }}"></i>
                     </a>
                     <ul id="menu-engagement" class="mt-1 space-y-0.5 pl-6 border-l border-slate-800 ml-5 {{ $isEngageActive ? '' : 'hidden' }}">
-                        <li><a href="{{ route('modules.engagement', ['tab' => 'designs']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isEngageActive && request('tab', 'designs') == 'designs' ? 'active-sublink' : '' }}">Creatives</a></li>
-                        <li><a href="{{ route('modules.engagement', ['tab' => 'birthdays']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isEngageActive && request('tab') == 'birthdays' ? 'active-sublink' : '' }}">Birthday Manager</a></li>
-                        <li><a href="{{ route('modules.engagement', ['tab' => 'festivals']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isEngageActive && request('tab') == 'festivals' ? 'active-sublink' : '' }}">Festival Greetings</a></li>
-                        <li><a href="{{ route('modules.engagement', ['tab' => 'settings']) }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ $isEngageActive && request('tab') == 'settings' ? 'active-sublink' : '' }}">Auto-send Settings</a></li>
+                        <li><a href="{{ route('school.engagement.designs') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.engagement.designs*') ? 'active-sublink text-pink-400 font-semibold' : '' }}">Creatives</a></li>
+                        <li><a href="{{ route('school.engagement.birthdays') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.engagement.birthdays*') ? 'active-sublink text-pink-400 font-semibold' : '' }}">Birthday Manager</a></li>
+                        <li><a href="{{ route('school.engagement.festivals') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.engagement.festivals*') ? 'active-sublink text-pink-400 font-semibold' : '' }}">Festival Greetings</a></li>
+                        <li><a href="{{ route('school.engagement.settings') }}" class="treeview-sublink block py-1.5 px-2 text-[11px] rounded text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs('school.engagement.settings*') ? 'active-sublink text-pink-400 font-semibold' : '' }}">Auto-send Settings</a></li>
                     </ul>
                 </div>
 
@@ -1055,125 +1070,176 @@
     </div>
 
     <!-- =============================================================== -->
-    <!-- 🔥 BULLETPROOF TREEVIEW JS ENGINE (Zero Page Reload on Parent)  -->
+    <!-- 🔥 BULLETPROOF ACCORDION TREEVIEW (Exclusive Single-Open Mode)  -->
     <!-- =============================================================== -->
     <script>
-    // 1. Accordion Toggle Function
+    // Helper to close a specific menu
+    function closeSingleMenu(menuEl) {
+        if (!menuEl) return;
+        menuEl.classList.add('hidden');
+        const arrow = document.getElementById(menuEl.id + '-arrow');
+        if (arrow) {
+            arrow.classList.remove('rotate-90');
+            arrow.classList.remove('text-indigo-400');
+        }
+        const parentBtn = document.getElementById(menuEl.id + '-parent');
+        if (parentBtn) {
+            parentBtn.classList.remove('bg-slate-800/80');
+        }
+    }
+
+    // Helper to open a specific menu
+    function openSingleMenu(menuEl) {
+        if (!menuEl) return;
+        menuEl.classList.remove('hidden');
+        const arrow = document.getElementById(menuEl.id + '-arrow');
+        if (arrow) {
+            arrow.classList.add('rotate-90');
+            arrow.classList.add('text-indigo-400');
+        }
+        const parentBtn = document.getElementById(menuEl.id + '-parent');
+        if (parentBtn) {
+            parentBtn.classList.add('bg-slate-800/80');
+        }
+    }
+
+    // 1. Accordion Toggle Function (Exclusive Single-Menu Open)
     function toggleMenu(event, menuId) {
         if (event) {
             event.preventDefault();
             event.stopPropagation();
         }
 
-        const menu = document.getElementById(menuId);
-        const arrow = document.getElementById(menuId + '-arrow');
-        const parentBtn = document.getElementById(menuId + '-parent');
-        if (!menu) return;
+        const targetMenu = document.getElementById(menuId);
+        if (!targetMenu) return;
 
-        const isHidden = menu.classList.contains('hidden');
-        if (isHidden) {
-            menu.classList.remove('hidden');
-            if (arrow) {
-                arrow.classList.add('rotate-90');
-                arrow.classList.add('text-indigo-400');
-            }
-            if (parentBtn) {
-                parentBtn.classList.add('bg-slate-800/80');
-            }
+        const isCurrentlyHidden = targetMenu.classList.contains('hidden');
 
-            // Save open state to localStorage
+        // 🔥 ACCORDION LOGIC: Close ALL other open menus in the sidebar immediately
+        const allMenus = document.querySelectorAll('ul[id^="menu-"]');
+        allMenus.forEach(otherMenu => {
+            if (otherMenu.id !== menuId) {
+                closeSingleMenu(otherMenu);
+            }
+        });
+
+        if (isCurrentlyHidden) {
+            // Open target menu
+            openSingleMenu(targetMenu);
             try {
-                let openMenus = JSON.parse(localStorage.getItem('erp_open_menus') || '[]');
-                if (!openMenus.includes(menuId)) {
-                    openMenus.push(menuId);
-                    localStorage.setItem('erp_open_menus', JSON.stringify(openMenus));
-                }
+                localStorage.setItem('erp_open_menus', JSON.stringify([menuId]));
             } catch(e) {}
         } else {
-            menu.classList.add('hidden');
-            if (arrow) {
-                arrow.classList.remove('rotate-90');
-                arrow.classList.remove('text-indigo-400');
-            }
-            if (parentBtn) {
-                parentBtn.classList.remove('bg-slate-800/80');
-            }
-
-            // Remove open state from localStorage
+            // User clicked the already-open menu to close it
+            closeSingleMenu(targetMenu);
             try {
-                let openMenus = JSON.parse(localStorage.getItem('erp_open_menus') || '[]');
-                openMenus = openMenus.filter(id => id !== menuId);
-                localStorage.setItem('erp_open_menus', JSON.stringify(openMenus));
+                localStorage.setItem('erp_open_menus', JSON.stringify([]));
             } catch(e) {}
         }
     }
 
-    // 2. On DOM Load: Restore user opened menus & ensure current active parent is expanded
+    // 2. On DOM Load: Ensure ONLY the active route or single remembered menu is open
     document.addEventListener('DOMContentLoaded', function() {
-        // Restore remembered menus
-        try {
-            let openMenus = JSON.parse(localStorage.getItem('erp_open_menus') || '[]');
-            openMenus.forEach(menuId => {
-                const menu = document.getElementById(menuId);
-                const arrow = document.getElementById(menuId + '-arrow');
-                const parentBtn = document.getElementById(menuId + '-parent');
-                if (menu) {
-                    menu.classList.remove('hidden');
-                    if (arrow) {
-                        arrow.classList.add('rotate-90');
-                        arrow.classList.add('text-indigo-400');
-                    }
-                    if (parentBtn) {
-                        parentBtn.classList.add('bg-slate-800/80');
-                    }
-                }
-            });
-        } catch(e) {}
-
-        // Ensure active sublink's parent is automatically opened
-        document.querySelectorAll('.treeview-sublink.active-sublink').forEach(link => {
-            const parentUl = link.closest('ul[id^="menu-"]');
+        const allMenus = document.querySelectorAll('ul[id^="menu-"]');
+        
+        // Check if an active sublink exists on this page
+        const activeLink = document.querySelector('.treeview-sublink.active-sublink');
+        let activeParentId = null;
+        if (activeLink) {
+            const parentUl = activeLink.closest('ul[id^="menu-"]');
             if (parentUl) {
-                parentUl.classList.remove('hidden');
-                const arrow = document.getElementById(parentUl.id + '-arrow');
-                if (arrow) {
-                    arrow.classList.add('rotate-90');
-                    arrow.classList.add('text-indigo-400');
-                }
-                const parentBtn = document.getElementById(parentUl.id + '-parent');
-                if (parentBtn) {
-                    parentBtn.classList.add('bg-slate-800/80');
+                activeParentId = parentUl.id;
+            }
+        }
+
+        // If no active sublink, check if blade rendered a menu open (not hidden)
+        if (!activeParentId) {
+            for (let m of allMenus) {
+                if (!m.classList.contains('hidden')) {
+                    activeParentId = m.id;
+                    break;
                 }
             }
+        }
+
+        // If still no active menu, check localStorage for last opened menu
+        if (!activeParentId) {
+            try {
+                const saved = JSON.parse(localStorage.getItem('erp_open_menus') || '[]');
+                if (saved.length > 0 && document.getElementById(saved[0])) {
+                    activeParentId = saved[0];
+                }
+            } catch(e) {}
+        }
+
+        // Apply single-open state: close all other menus, open only activeParentId
+        allMenus.forEach(m => {
+            if (activeParentId && m.id === activeParentId) {
+                openSingleMenu(m);
+            } else {
+                closeSingleMenu(m);
+            }
         });
+
+        if (activeParentId) {
+            try {
+                localStorage.setItem('erp_open_menus', JSON.stringify([activeParentId]));
+            } catch(e) {}
+        }
     });
 
     // 3. Instant Live Sidebar Search Filter
     function filterSidebarMenu(query) {
         const q = (query || '').toLowerCase().trim();
         const items = document.querySelectorAll('.treeview-parent-item');
+        const allMenus = document.querySelectorAll('ul[id^="menu-"]');
 
+        if (!q) {
+            // Restore normal state: show all parent items
+            items.forEach(item => {
+                item.style.display = '';
+            });
+
+            // Restore accordion single-open state
+            let activeId = null;
+            try {
+                const saved = JSON.parse(localStorage.getItem('erp_open_menus') || '[]');
+                if (saved.length > 0) activeId = saved[0];
+            } catch(e) {}
+
+            if (!activeId) {
+                const activeLink = document.querySelector('.treeview-sublink.active-sublink');
+                if (activeLink) {
+                    const p = activeLink.closest('ul[id^="menu-"]');
+                    if (p) activeId = p.id;
+                }
+            }
+
+            allMenus.forEach(m => {
+                if (activeId && m.id === activeId) {
+                    openSingleMenu(m);
+                } else {
+                    closeSingleMenu(m);
+                }
+            });
+            return;
+        }
+
+        // If searching, show and expand matching parents
         items.forEach(item => {
             const text = item.textContent.toLowerCase();
             const menuUl = item.querySelector('ul[id^="menu-"]');
-            const arrow = item.querySelector('[id$="-arrow"]');
-
-            if (!q) {
-                item.style.display = '';
-                return;
-            }
 
             if (text.includes(q)) {
                 item.style.display = '';
                 if (menuUl) {
-                    menuUl.classList.remove('hidden');
-                    if (arrow) {
-                        arrow.classList.add('rotate-90');
-                        arrow.classList.add('text-indigo-400');
-                    }
+                    openSingleMenu(menuUl);
                 }
             } else {
                 item.style.display = 'none';
+                if (menuUl) {
+                    closeSingleMenu(menuUl);
+                }
             }
         });
     }

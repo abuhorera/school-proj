@@ -1,0 +1,946 @@
+/* ============================================================================
+   TPL DESIGN SYSTEM — central tokens + shared components
+   ----------------------------------------------------------------------------
+   This file is the single source of truth for the "tpl" admin design language
+   (soft white cards, #e5e7eb borders, indigo accent, filter pills, ghost icon
+   actions). It is loaded globally via resources/views/vendor/adminlte/page.blade.php.
+
+   TO RE-THEME THE WHOLE PANEL (e.g. purple -> orange):
+   change --tpl-primary and --tpl-primary-2 below. All soft backgrounds,
+   borders, focus rings and shadows are derived from them automatically.
+
+   Page-specific blades should use these classes (tpl-card, tpl-btn-primary,
+   tpl-chip, ...) and the CSS variables — never hardcode accent hex values.
+   ========================================================================== */
+
+:root {
+    /* ── Accent (the only thing you normally change) ── */
+    --tpl-primary: #4f46e5;
+    --tpl-primary-2: #6366f1;
+
+    /* ── Derived accent shades (fallbacks for old browsers) ── */
+    --tpl-primary-deep: #4338ca;
+    --tpl-primary-soft: #eef2ff;
+    --tpl-primary-border: #c7d2fe;
+    --tpl-primary-focus: rgba(79, 70, 229, .12);
+    --tpl-primary-shadow: rgba(79, 70, 229, .3);
+    --tpl-primary-shadow-lg: rgba(79, 70, 229, .4);
+
+    /* ── Neutrals ── */
+    --tpl-text: #111827;
+    --tpl-text-2: #4b5563;
+    --tpl-text-3: #6b7280;
+    --tpl-text-muted: #9ca3af;
+    --tpl-border: #dbdfe5;
+    --tpl-border-strong: #c8ced6;
+    --tpl-divider: #f3f4f6;
+    /* Hairline for dividing lines (card head/foot, section splits). Kept
+       separate from --tpl-divider, which is also used as a soft BACKGROUND
+       fill (muted chips, pill hover, gray icon badges) and must stay pale. */
+    --tpl-line: #dde1e6;
+    --tpl-bg-soft: #f9fafb;
+
+    /* ── Semantic soft-chip palette ── */
+    --tpl-green: #047857;
+    --tpl-green-2: #059669;
+    --tpl-green-soft: #ecfdf5;
+    --tpl-red: #dc2626;
+    --tpl-red-soft: #fef2f2;
+    --tpl-blue: #1d4ed8;
+    --tpl-blue-soft: #eff6ff;
+    --tpl-violet: #6d28d9;
+    --tpl-violet-soft: #f5f3ff;
+    --tpl-amber: #b45309;
+    --tpl-amber-soft: #fffbeb;
+    --tpl-amber-border: #fde68a;
+
+    /* ── Composites ── */
+    --tpl-grad: linear-gradient(135deg, var(--tpl-primary-2), var(--tpl-primary));
+    --tpl-card-shadow: 0 6px 20px rgba(17, 24, 39, .08);
+    --tpl-radius: 10px;
+    --tpl-radius-sm: 8px;
+}
+
+/* Modern browsers: derive accent shades from --tpl-primary so a single
+   variable change re-themes soft backgrounds, borders and shadows too. */
+@supports (color: color-mix(in srgb, red 50%, white)) {
+    :root {
+        --tpl-primary-deep: color-mix(in srgb, var(--tpl-primary) 85%, #000000);
+        --tpl-primary-soft: color-mix(in srgb, var(--tpl-primary) 9%, #ffffff);
+        --tpl-primary-border: color-mix(in srgb, var(--tpl-primary) 28%, #ffffff);
+        --tpl-primary-focus: color-mix(in srgb, var(--tpl-primary) 12%, transparent);
+        --tpl-primary-shadow: color-mix(in srgb, var(--tpl-primary) 30%, transparent);
+        --tpl-primary-shadow-lg: color-mix(in srgb, var(--tpl-primary) 40%, transparent);
+    }
+}
+
+/* ============================================================================
+   COMPONENTS
+   ========================================================================== */
+
+/* ── Page header helpers ── */
+.tpl-page-head { row-gap: 10px; }
+.tpl-head-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+/* ── Buttons ── */
+.tpl-btn-primary {
+    background: var(--tpl-grad);
+    color: #fff !important;
+    border: none;
+    font-weight: 600;
+    border-radius: var(--tpl-radius-sm);
+    padding: 8px 18px;
+    box-shadow: 0 2px 8px var(--tpl-primary-shadow);
+    transition: box-shadow .15s ease, filter .15s ease;
+}
+.tpl-btn-primary:hover:not(:disabled) { filter: brightness(1.06); box-shadow: 0 4px 14px var(--tpl-primary-shadow-lg); }
+.tpl-btn-primary:disabled { opacity: .7; }
+.tpl-btn-ghost {
+    background: #fff;
+    color: var(--tpl-text-2) !important;
+    border: 1px solid var(--tpl-border-strong);
+    border-radius: var(--tpl-radius-sm);
+    padding: 8px 14px;
+    transition: background-color .15s ease, border-color .15s ease;
+}
+.tpl-btn-ghost:hover { background: var(--tpl-bg-soft); border-color: var(--tpl-text-muted); }
+.tpl-btn-wa {
+    background: var(--tpl-green-soft);
+    color: var(--tpl-green) !important;
+    border: 1px solid var(--tpl-green-soft);
+    font-weight: 600;
+    border-radius: var(--tpl-radius-sm);
+    transition: background-color .15s ease, border-color .15s ease;
+}
+.tpl-btn-wa i { margin-right: 3px; }
+.tpl-btn-wa:hover:not(.disabled) { background: #d7f7e8; border-color: var(--tpl-green-2); color: var(--tpl-green) !important; }
+.tpl-btn-wa.disabled { opacity: .5; cursor: not-allowed; pointer-events: none; }
+/* Solid accent (green token) — a secondary CTA distinct from the primary gradient. */
+.tpl-btn-accent {
+    background: var(--tpl-green);
+    color: #fff !important;
+    border: none;
+    font-weight: 600;
+    border-radius: var(--tpl-radius-sm);
+    padding: 8px 16px;
+    transition: filter .15s ease, box-shadow .15s ease;
+}
+.tpl-btn-accent:hover:not(:disabled) { filter: brightness(1.06); box-shadow: 0 4px 14px rgba(0,0,0,.12); }
+.tpl-btn-accent:disabled { opacity: .7; }
+
+/* ── Cards (calm hover: shadow + border only) ── */
+.tpl-card {
+    background: #fff;
+    border: 1px solid var(--tpl-border);
+    border-radius: var(--tpl-radius);
+    overflow: hidden;
+    transition: box-shadow .18s ease, border-color .18s ease;
+}
+.tpl-card:hover { border-color: var(--tpl-primary-border); box-shadow: var(--tpl-card-shadow); }
+.tpl-card.no-hover:hover { border-color: var(--tpl-border); box-shadow: none; }
+.tpl-card-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--tpl-line);
+}
+.tpl-card-title {
+    font-weight: 700;
+    color: var(--tpl-text);
+    font-size: .95rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+}
+.tpl-card-title i { color: var(--tpl-primary); }
+.tpl-card-body { padding: 16px; }
+.tpl-card-chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+/* Form-card footer: right-aligned action row separated by a hairline. */
+.tpl-card-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 12px 16px;
+    border-top: 1px solid var(--tpl-line);
+}
+
+/* Side help panel: bulleted tips for form pages (fills the empty column). */
+.tpl-aside-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    color: var(--tpl-text);
+    font-size: .95rem;
+    margin: 0 0 12px;
+}
+.tpl-tips { list-style: none; margin: 0; padding: 0; }
+.tpl-tips li {
+    position: relative;
+    padding: 8px 0 8px 20px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--tpl-text-2);
+    border-bottom: 1px solid var(--tpl-line);
+}
+.tpl-tips li:last-child { border-bottom: 0; }
+.tpl-tips li::before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 14px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--tpl-primary);
+}
+.tpl-tips li strong { color: var(--tpl-text); font-weight: 600; }
+
+/* ── Soft chips ── */
+.tpl-chip {
+    display: inline-block;
+    font-size: .7rem;
+    font-weight: 600;
+    border-radius: 999px;
+    padding: 2px 10px;
+    white-space: nowrap;
+}
+.tpl-chip.is-green { background: var(--tpl-green-soft); color: var(--tpl-green); }
+.tpl-chip.is-red { background: var(--tpl-red-soft); color: var(--tpl-red); }
+.tpl-chip.is-blue { background: var(--tpl-blue-soft); color: var(--tpl-blue); }
+.tpl-chip.is-violet { background: var(--tpl-violet-soft); color: var(--tpl-violet); }
+.tpl-chip.is-amber { background: var(--tpl-amber-soft); color: var(--tpl-amber); }
+.tpl-chip.is-indigo { background: var(--tpl-primary-soft); color: var(--tpl-primary); }
+.tpl-chip.is-muted { background: var(--tpl-divider); color: var(--tpl-text-3); }
+
+/* ── Filter pills ── */
+.tpl-pill {
+    border: 1px solid var(--tpl-border);
+    background: #fff;
+    color: var(--tpl-text-2);
+    border-radius: 999px;
+    padding: 5px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color .15s ease, color .15s ease, border-color .15s ease;
+}
+.tpl-pill:hover { background: var(--tpl-divider); }
+.tpl-pill.active { background: var(--tpl-primary); border-color: var(--tpl-primary); color: #fff; }
+.tpl-pill-count {
+    display: inline-block;
+    background: rgba(0, 0, 0, .08);
+    border-radius: 999px;
+    padding: 0 7px;
+    font-size: 11px;
+    margin-left: 4px;
+}
+.tpl-pill.active .tpl-pill-count { background: rgba(255, 255, 255, .22); }
+
+/* ── Selectable option tiles ──
+   A checkbox/radio rendered as a bordered tile that highlights when checked.
+   The real input stays in the DOM (hidden but focusable), so no JS is involved
+   and keyboard/screen-reader behaviour is unchanged.
+
+   <div class="tpl-opts tpl-opts-2">
+     <label class="tpl-opt">
+       <input type="checkbox" name="…" value="…">
+       <span class="tpl-opt-box">
+         <i class="fas fa-camera"></i>
+         <span class="tpl-opt-text"><strong>Title</strong><small>Hint</small></span>
+         <i class="fas fa-check tpl-opt-tick"></i>
+       </span>
+     </label>
+   </div> */
+.tpl-opts { display: grid; grid-template-columns: 1fr; gap: 10px; }
+.tpl-opts-2 { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
+.tpl-opts-3 { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+
+.tpl-opt { display: block; margin: 0; cursor: pointer; }
+/* Visually hidden but still focusable and exposed to assistive tech. */
+.tpl-opt input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    margin: 0;
+}
+.tpl-opt-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--tpl-border);
+    border-radius: var(--tpl-radius-sm);
+    background: #fff;
+    transition: border-color .15s ease, background-color .15s ease, box-shadow .15s ease;
+}
+.tpl-opt-box > i:first-child { font-size: 16px; color: var(--tpl-text-muted); width: 18px; text-align: center; }
+.tpl-opt-text { flex: 1 1 auto; min-width: 0; }
+.tpl-opt-text strong { display: block; font-size: 13px; font-weight: 600; color: var(--tpl-text); }
+.tpl-opt-text small { display: block; font-size: 11.5px; color: var(--tpl-text-3); }
+.tpl-opt-tick { font-size: 12px; color: var(--tpl-primary); opacity: 0; transition: opacity .15s ease; }
+
+.tpl-opt:hover .tpl-opt-box { border-color: var(--tpl-border-strong); }
+.tpl-opt input:checked + .tpl-opt-box {
+    border-color: var(--tpl-primary-border);
+    background: var(--tpl-primary-soft);
+}
+.tpl-opt input:checked + .tpl-opt-box > i:first-child { color: var(--tpl-primary); }
+.tpl-opt input:checked + .tpl-opt-box .tpl-opt-tick { opacity: 1; }
+.tpl-opt input:focus-visible + .tpl-opt-box { box-shadow: 0 0 0 3px var(--tpl-primary-focus); }
+.tpl-opt input:disabled + .tpl-opt-box { opacity: .55; cursor: not-allowed; }
+
+/* ── Ghost icon buttons ── */
+.tpl-icon-btn {
+    width: 30px;
+    height: 30px;
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    color: var(--tpl-text-muted);
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color .15s ease, color .15s ease;
+}
+.tpl-icon-btn:hover { background: var(--tpl-primary-soft); color: var(--tpl-primary); }
+.tpl-icon-btn.is-danger:hover { background: var(--tpl-red-soft); color: var(--tpl-red); }
+
+/* ── Icon squares ── */
+.tpl-ico {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--tpl-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .95rem;
+    flex-shrink: 0;
+    background: var(--tpl-primary-soft);
+    color: var(--tpl-primary);
+}
+.tpl-ico.is-green { background: var(--tpl-green-soft); color: var(--tpl-green); }
+.tpl-ico.is-blue { background: var(--tpl-blue-soft); color: var(--tpl-blue); }
+.tpl-ico.is-violet { background: var(--tpl-violet-soft); color: var(--tpl-violet); }
+.tpl-ico.is-amber { background: var(--tpl-amber-soft); color: var(--tpl-amber); }
+.tpl-ico.is-red { background: var(--tpl-red-soft); color: var(--tpl-red); }
+.tpl-ico.is-gray { background: var(--tpl-divider); color: var(--tpl-text-2); }
+
+/* ── Switches ── */
+.tpl-switch { position: relative; display: inline-block; width: 38px; height: 21px; flex-shrink: 0; cursor: pointer; margin: 0; }
+.tpl-switch input { opacity: 0; width: 0; height: 0; }
+.tpl-switch .slider {
+    position: absolute;
+    inset: 0;
+    background: var(--tpl-border-strong);
+    border-radius: 999px;
+    transition: background-color .15s ease;
+}
+.tpl-switch .slider:before {
+    content: '';
+    position: absolute;
+    height: 17px;
+    width: 17px;
+    left: 2px;
+    top: 2px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform .15s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
+}
+.tpl-switch input:checked + .slider { background: var(--tpl-primary); }
+.tpl-switch input:checked + .slider:before { transform: translateX(17px); }
+.tpl-switch input:disabled + .slider { opacity: .5; cursor: not-allowed; }
+
+/* ── Form fields (scope with .tpl-form) ── */
+.tpl-form label { font-size: .8rem; font-weight: 600; color: #374151; margin-bottom: 4px; }
+.tpl-form .form-control, .tpl-form .custom-select {
+    border-radius: var(--tpl-radius-sm);
+    border-color: var(--tpl-border-strong);
+}
+.tpl-form .form-control:focus, .tpl-form .custom-select:focus {
+    border-color: var(--tpl-primary-border);
+    box-shadow: 0 0 0 3px var(--tpl-primary-focus);
+}
+
+/* ── Compact filter bar (add .tpl-filter alongside .tpl-form) ──
+   Smaller muted labels + compact controls/buttons for filter rows. */
+.tpl-filter label {
+    font-size: 11.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+    color: var(--tpl-text-3);
+    margin-bottom: 3px;
+}
+.tpl-filter .form-control,
+.tpl-filter .custom-select,
+.tpl-filter select.form-control {
+    height: calc(1.4em + .5rem + 2px);
+    padding: .25rem .55rem;
+    font-size: 13px;
+}
+.tpl-filter .btn { padding: 6px 14px; font-size: 13px; }
+.tpl-filter .input-group-text { padding: .25rem .5rem; }
+
+/* ── Toolbar (search + pills) ── */
+.tpl-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    border: 1px solid var(--tpl-border);
+    border-radius: var(--tpl-radius);
+    padding: 10px 12px;
+}
+/* `space-between` above assumes TWO groups (e.g. search left, actions right).
+   A toolbar whose only children are bare pills gets them flung to opposite
+   edges with the middle ones stranded — add `is-start` to keep them clustered. */
+.tpl-toolbar.is-start { justify-content: flex-start; }
+
+/* ── Soft banners ── */
+.tpl-banner {
+    background: var(--tpl-primary-soft);
+    border: 1px solid var(--tpl-primary-border);
+    color: var(--tpl-primary);
+    border-radius: var(--tpl-radius);
+    padding: 10px 14px;
+    font-size: 13.5px;
+}
+.tpl-banner i { margin-right: 6px; }
+.tpl-banner.is-warning {
+    background: var(--tpl-amber-soft);
+    border-color: var(--tpl-amber-border);
+    color: #92400e;
+}
+.tpl-banner.is-success {
+    background: var(--tpl-green-soft);
+    border-color: color-mix(in srgb, var(--tpl-green) 25%, #ffffff);
+    color: var(--tpl-green);
+}
+.tpl-banner.is-danger {
+    background: var(--tpl-red-soft);
+    border-color: color-mix(in srgb, var(--tpl-red) 25%, #ffffff);
+    color: var(--tpl-red);
+}
+
+/* ── Tables (full Excel-like grid — pair with .table inside a .tpl-card) ── */
+.tpl-table { margin-bottom: 0; }
+.tpl-table thead th {
+    background: var(--tpl-primary-soft);
+    color: var(--tpl-primary-deep);
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    border-top: 0;
+    border-bottom: 2px solid var(--tpl-primary-border);
+    border-right: 1px solid var(--tpl-primary-border);
+    padding: 11px 16px;
+    white-space: nowrap;
+}
+.tpl-table thead th:last-child { border-right: 0; }
+.tpl-table tbody td {
+    padding: 12px 16px;
+    border-top: 0;
+    border-bottom: 1px solid var(--tpl-border);
+    border-right: 1px solid var(--tpl-border);
+    vertical-align: middle;
+    font-size: 13.5px;
+    color: #374151;
+}
+.tpl-table tbody td:last-child { border-right: 0; }
+.tpl-table tbody tr:last-child td { border-bottom: 0; }
+.tpl-table .tpl-td-num {
+    width: 52px;
+    text-align: center;
+    color: var(--tpl-text-muted);
+    font-weight: 600;
+}
+.tpl-table tbody tr { transition: background-color .12s ease; }
+.tpl-table tbody tr:hover { background: var(--tpl-primary-soft); }
+
+/* ── Empty state ── */
+.tpl-empty { text-align: center; padding: 48px 20px; }
+.tpl-empty-ico {
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 12px;
+    border-radius: 50%;
+    background: var(--tpl-primary-soft);
+    color: var(--tpl-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+.tpl-empty-title { font-weight: 600; color: var(--tpl-text); }
+.tpl-empty-sub { font-size: 13px; color: var(--tpl-text-3); }
+
+/* ── Card grid ── */
+.tpl-grid-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+    gap: 14px;
+}
+
+/* ── Design/template preview cards ──
+   The shelf card used by the Templates library and the ID Cards → Card Designs
+   page: a large preview box (saved thumbnail, or the design's own markup in a
+   lazy iframe) over a footer of name + chip + icon-only actions.
+   Lived only in certificates/templates/index.blade.php until a second page
+   needed it; identical rules still shipped there are harmless overrides. */
+.tpl-manage-card {
+    background: #fff;
+    border: 1px solid var(--tpl-border);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: box-shadow .18s ease, border-color .18s ease;
+}
+.tpl-manage-card:hover { border-color: var(--tpl-primary-border); box-shadow: 0 6px 20px rgba(17, 24, 39, .08); }
+
+.tpl-preview-box {
+    height: 280px;
+    overflow: hidden;
+    background: #f9fafb;
+    position: relative;
+}
+.tpl-preview-box .lazy-iframe { width: 100%; height: 100%; border: none; pointer-events: none; }
+
+.tpl-designer-badge {
+    position: absolute;
+    top: 8px; right: 8px; z-index: 2;
+    width: 24px; height: 24px;
+    border-radius: 999px;
+    background: var(--tpl-primary-soft);
+    color: var(--tpl-primary);
+    font-size: 11px;
+    display: flex; align-items: center; justify-content: center;
+}
+
+.hover-zoom-icon {
+    position: absolute; inset: 0; z-index: 3;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0;
+    transition: opacity .18s ease;
+    pointer-events: none;
+    background: rgba(17, 24, 39, .18);
+}
+.hover-zoom-icon i { font-size: 2rem; color: #fff; filter: drop-shadow(0 2px 4px rgba(0,0,0,.5)); }
+.tpl-manage-card:hover .hover-zoom-icon { opacity: 1; }
+
+.thumbnail-inherited-badge {
+    position: absolute; bottom: 8px; left: 8px; z-index: 1;
+    font-size: .65rem;
+    background: rgba(17, 24, 39, .65);
+    color: #fff;
+}
+
+.tpl-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px 12px;
+    border-top: 1px solid #f3f4f6;
+    background: #fff;
+}
+.tpl-card-name { font-size: .87rem; font-weight: 600; color: var(--tpl-text); }
+.tpl-card-meta { font-size: .72rem; color: var(--tpl-text-3); }
+.tpl-card-actions { display: flex; gap: 2px; flex-shrink: 0; }
+
+.tpl-type-chip {
+    display: inline-block;
+    font-size: .68rem;
+    border-radius: 999px;
+    padding: 1px 8px;
+    margin-top: 2px;
+}
+.tpl-type-chip.is-student { background: #ecfdf5; color: #047857; }
+.tpl-type-chip.is-staff { background: #eff6ff; color: #1d4ed8; }
+.tpl-type-chip.is-muted { background: #f3f4f6; color: #6b7280; }
+
+/* ── Mobile polish ── */
+@media (max-width: 575.98px) {
+    .tpl-head-actions { width: 100%; }
+    .tpl-head-actions .btn { flex: 1 1 auto; text-align: center; }
+}
+
+/* ── View toggle (list/grid segmented control) ──
+   Pair with <x-tpl.view-toggle storage-key="..." target="#..." />.
+   Hidden on mobile (cards are forced there via tpl-table-stack). */
+.tpl-view-toggle {
+    display: inline-flex;
+    border: 1px solid var(--tpl-border-strong);
+    border-radius: var(--tpl-radius-sm);
+    overflow: hidden;
+    background: #fff;
+}
+.tpl-view-toggle .tpl-vt-btn {
+    border: 0;
+    background: transparent;
+    color: var(--tpl-text-muted);
+    width: 36px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color .15s ease, color .15s ease;
+}
+.tpl-view-toggle .tpl-vt-btn + .tpl-vt-btn { border-left: 1px solid var(--tpl-border); }
+.tpl-view-toggle .tpl-vt-btn:hover { color: var(--tpl-text-2); }
+.tpl-view-toggle .tpl-vt-btn.active { background: var(--tpl-primary-soft); color: var(--tpl-primary); }
+
+/* ── Mobile stacking for tpl tables ──
+   Add .tpl-table-stack alongside .tpl-table, then annotate cells:
+     data-th="Label"      -> label shown before the value on mobile
+     .tpl-cell-primary    -> promoted to the card title (no label)
+     .tpl-cell-actions    -> bottom action row, right-aligned
+     .tpl-hide-sm         -> dropped entirely on mobile (e.g. "#")
+   Desktop rendering is untouched. */
+@media (max-width: 767.98px) {
+    .tpl-table.tpl-table-stack thead { display: none; }
+    .tpl-table.tpl-table-stack tbody,
+    .tpl-table.tpl-table-stack tbody tr,
+    .tpl-table.tpl-table-stack tbody td { display: block; width: 100%; }
+    .tpl-table.tpl-table-stack tbody tr {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--tpl-border);
+    }
+    .tpl-table.tpl-table-stack tbody tr:last-child { border-bottom: 0; }
+    .tpl-table.tpl-table-stack tbody tr:hover { background: transparent; }
+    .tpl-table.tpl-table-stack tbody td {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        border: 0 !important;
+        padding: 3px 0;
+        font-size: 13px;
+        text-align: left !important;
+        white-space: normal !important;
+    }
+    .tpl-table.tpl-table-stack tbody td[data-th]::before {
+        content: attr(data-th);
+        color: var(--tpl-text-3);
+        font-size: 10.5px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: .4px;
+        flex-shrink: 0;
+    }
+    .tpl-table.tpl-table-stack tbody td.tpl-cell-primary {
+        font-weight: 600;
+        color: var(--tpl-text);
+        font-size: 14px;
+        padding-bottom: 4px;
+    }
+    .tpl-table.tpl-table-stack tbody td.tpl-cell-primary::before { display: none; }
+    .tpl-table.tpl-table-stack tbody td.tpl-cell-actions {
+        justify-content: flex-end;
+        gap: 8px;
+        border-top: 1px solid var(--tpl-line) !important;
+        margin-top: 8px;
+        padding-top: 10px;
+    }
+    .tpl-table.tpl-table-stack tbody td.tpl-cell-actions::before { display: none; }
+    .tpl-table.tpl-table-stack tbody td.tpl-cell-actions .tpl-icon-btn {
+        width: 38px;
+        height: 38px;
+        background: var(--tpl-bg-soft);
+        font-size: 14px;
+    }
+    .tpl-table.tpl-table-stack .tpl-hide-sm { display: none !important; }
+    .tpl-table.tpl-table-stack .tpl-empty { padding: 32px 16px; }
+}
+
+/* ============================================================================
+   DATATABLES SKIN (jQuery DataTables + Buttons, Bootstrap4 flavour)
+   ----------------------------------------------------------------------------
+   Global chrome restyle: search box, length select, export buttons, info text,
+   pagination, processing overlay. Loaded after the DataTables plugin CSS (see
+   vendor/adminlte/page.blade.php) so these rules win.
+   The table body itself only gets the tpl look when the table carries
+   .tpl-table — public/js/tpl-datatable.js adds it automatically.
+   ========================================================================== */
+
+/* Layout wrappers (generated by the tplDataTable() default dom):
+   .tpl-dt-card > [.tpl-card-head?] > .tpl-dt-top > .tpl-dt-tablewrap > .tpl-dt-bottom
+   Toolbar, table and footer all live INSIDE one tpl-card, divider-separated. */
+.tpl-dt-top {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+}
+.tpl-dt-card .tpl-dt-top {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--tpl-line);
+}
+.tpl-dt-tools { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.tpl-dt-tablewrap { overflow-x: auto; position: relative; }
+.tpl-dt-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+}
+.tpl-dt-card .tpl-dt-bottom {
+    padding: 10px 14px;
+    border-top: 1px solid var(--tpl-line);
+}
+
+/* Length select */
+.dataTables_wrapper .dataTables_length { margin: 0; }
+.dataTables_wrapper .dataTables_length label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--tpl-text-3);
+}
+.dataTables_wrapper .dataTables_length select {
+    border: 1px solid var(--tpl-border-strong);
+    border-radius: var(--tpl-radius-sm);
+    color: var(--tpl-text-2);
+    background-color: #fff;
+    padding: 4px 24px 4px 8px;
+    height: 31px;
+    font-size: 12.5px;
+}
+.dataTables_wrapper .dataTables_length select:focus {
+    border-color: var(--tpl-primary-border);
+    box-shadow: 0 0 0 3px var(--tpl-primary-focus);
+    outline: 0;
+}
+
+/* Search box */
+.dataTables_wrapper .dataTables_filter { margin: 0; }
+.dataTables_wrapper .dataTables_filter label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--tpl-text-3);
+}
+.dataTables_wrapper .dataTables_filter input {
+    border: 1px solid var(--tpl-border-strong);
+    border-radius: var(--tpl-radius-sm);
+    padding: 5px 12px;
+    height: 31px;
+    font-size: 13px;
+    color: var(--tpl-text);
+    background: #fff;
+    margin-left: 0 !important;
+    min-width: 190px;
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+.dataTables_wrapper .dataTables_filter input:focus {
+    border-color: var(--tpl-primary-border);
+    box-shadow: 0 0 0 3px var(--tpl-primary-focus);
+    outline: 0;
+}
+.dataTables_wrapper .dataTables_filter input::placeholder { color: var(--tpl-text-muted); }
+
+/* Export / colvis buttons */
+.dataTables_wrapper .dt-buttons {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+}
+.dataTables_wrapper .dt-buttons .btn {
+    background: #fff !important;
+    color: var(--tpl-text-2) !important;
+    border: 1px solid var(--tpl-border-strong) !important;
+    border-radius: var(--tpl-radius-sm) !important;
+    padding: 5px 12px !important;
+    font-size: 12.5px !important;
+    font-weight: 500 !important;
+    line-height: 1.4 !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+}
+.dataTables_wrapper .dt-buttons .btn:hover,
+.dataTables_wrapper .dt-buttons .btn:focus {
+    background: var(--tpl-bg-soft) !important;
+    color: var(--tpl-text) !important;
+    border-color: var(--tpl-text-muted) !important;
+}
+.dataTables_wrapper .dt-buttons .btn:focus { box-shadow: 0 0 0 3px var(--tpl-primary-focus) !important; }
+
+/* Colvis dropdown collection */
+.dt-button-collection {
+    border: 1px solid var(--tpl-border) !important;
+    border-radius: var(--tpl-radius) !important;
+    box-shadow: var(--tpl-card-shadow) !important;
+    padding: 6px !important;
+    background: #fff !important;
+}
+.dt-button-collection .dt-button,
+.dt-button-collection .dropdown-item {
+    border-radius: 6px !important;
+    font-size: 13px !important;
+    color: var(--tpl-text-2) !important;
+    padding: 6px 10px !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+.dt-button-collection .dt-button:hover,
+.dt-button-collection .dropdown-item:hover { background: var(--tpl-bg-soft) !important; }
+.dt-button-collection .dt-button.active,
+.dt-button-collection .dropdown-item.active {
+    background: var(--tpl-primary-soft) !important;
+    color: var(--tpl-primary) !important;
+}
+
+/* Info text */
+.dataTables_wrapper .dataTables_info {
+    padding-top: 0;
+    margin: 0;
+    font-size: 12px;
+    color: var(--tpl-text-3);
+}
+
+/* Pagination pills */
+.dataTables_wrapper .dataTables_paginate { margin: 0; padding-top: 0; }
+.dataTables_wrapper .dataTables_paginate .pagination { margin: 0; gap: 4px; flex-wrap: wrap; }
+.dataTables_wrapper .dataTables_paginate .page-item .page-link {
+    border: 1px solid var(--tpl-border);
+    border-radius: var(--tpl-radius-sm) !important;
+    color: var(--tpl-text-2);
+    background: #fff;
+    font-size: 12.5px;
+    padding: 4px 10px;
+    min-width: 30px;
+    text-align: center;
+    box-shadow: none !important;
+    transition: background-color .15s ease, color .15s ease, border-color .15s ease;
+}
+.dataTables_wrapper .dataTables_paginate .page-item .page-link:hover { background: var(--tpl-bg-soft); }
+.dataTables_wrapper .dataTables_paginate .page-item.active .page-link {
+    background: var(--tpl-primary);
+    border-color: var(--tpl-primary);
+    color: #fff;
+}
+.dataTables_wrapper .dataTables_paginate .page-item.disabled .page-link {
+    color: var(--tpl-text-muted);
+    background: #fff;
+    border-color: var(--tpl-divider);
+}
+
+/* Processing overlay */
+.dataTables_wrapper .dataTables_processing {
+    background: rgba(255, 255, 255, .9) !important;
+    border: 1px solid var(--tpl-border) !important;
+    border-radius: var(--tpl-radius) !important;
+    box-shadow: var(--tpl-card-shadow) !important;
+    color: var(--tpl-text-2) !important;
+    font-size: 13px;
+    padding: 14px 18px !important;
+}
+.tpl-dt-spinner {
+    width: 22px;
+    height: 22px;
+    margin: 0 auto;
+    border: 3px solid var(--tpl-primary-soft);
+    border-top-color: var(--tpl-primary);
+    border-radius: 50%;
+    animation: tplDtSpin .7s linear infinite;
+}
+@keyframes tplDtSpin { to { transform: rotate(360deg); } }
+
+/* Table body — only when the table carries .tpl-table (added by tplDataTable) */
+table.dataTable.tpl-table { border-collapse: collapse !important; margin: 0 !important; }
+table.dataTable.tpl-table thead th {
+    position: relative;
+}
+table.dataTable.tpl-table thead .sorting:before,
+table.dataTable.tpl-table thead .sorting:after,
+table.dataTable.tpl-table thead .sorting_asc:before,
+table.dataTable.tpl-table thead .sorting_asc:after,
+table.dataTable.tpl-table thead .sorting_desc:before,
+table.dataTable.tpl-table thead .sorting_desc:after {
+    color: var(--tpl-text-muted);
+    opacity: .5;
+}
+table.dataTable.tpl-table thead .sorting_asc:before,
+table.dataTable.tpl-table thead .sorting_desc:after {
+    color: var(--tpl-primary);
+    opacity: 1;
+}
+table.dataTable.tpl-table tbody tr.selected,
+table.dataTable.tpl-table tbody tr.shown { background: var(--tpl-primary-soft); }
+
+/* Generic grid cards (tplDataTable auto-generated grid view) */
+.tpl-dt-gcard {
+    border: 1px solid var(--tpl-border);
+    border-radius: var(--tpl-radius);
+    background: #fff;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: box-shadow .18s ease, border-color .18s ease;
+}
+.tpl-dt-gcard:hover { border-color: var(--tpl-primary-border); box-shadow: var(--tpl-card-shadow); }
+.tpl-gc-title { font-weight: 600; color: var(--tpl-text); font-size: .9rem; overflow-wrap: anywhere; }
+.tpl-gc-label {
+    display: block;
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    color: var(--tpl-text-3);
+    margin-bottom: 2px;
+}
+.tpl-gc-value { font-size: 13px; color: var(--tpl-text-2); overflow-wrap: anywhere; }
+.tpl-gc-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+    border-top: 1px solid var(--tpl-line);
+    padding-top: 10px;
+    margin-top: auto;
+}
+
+/* Toolbar layout on mobile (only affects adapter-driven tables) */
+@media (max-width: 767.98px) {
+    /* Export / copy / print / column-visibility are desktop power-tools. On a
+       phone the list already renders as cards (so "Columns" is meaningless) and
+       the wrapped button rows just look cluttered — hide them. They return at
+       >=768px. */
+    .tpl-dt-top .dt-buttons { display: none !important; }
+    /* Keep the length select + search on ONE compact row: "Show 10" stays
+       auto-width on the left, the search box flexes to fill the rest. */
+    .tpl-dt-top { flex-wrap: nowrap; gap: 8px; align-items: center; }
+    .tpl-dt-tools { flex-shrink: 0; margin: 0; }
+    .tpl-dt-search { flex: 1 1 auto; min-width: 0; }
+    .tpl-dt-top .dataTables_filter,
+    .tpl-dt-top .dataTables_filter label { width: 100%; }
+    .tpl-dt-top .dataTables_filter input { width: 100%; min-width: 0; }
+    /* Info + pagination still stack, centered, below the table. */
+    .tpl-dt-bottom { flex-direction: column; align-items: stretch; }
+    .tpl-dt-bottom .dataTables_info { text-align: center; }
+    .tpl-dt-bottom .dataTables_paginate { display: flex; justify-content: center; }
+}
